@@ -1,0 +1,293 @@
+table tr td {font-size:12px;}
+table.listjobs { width:1250px; word-wrap:break-word;
+table-layout: fixed;}
+table.listjobs tr td {padding:5px; font-size:12px;text-align:left;}
+table.listjobs tr th {padding:5px;text-align:left;}
+
+table.listjobs tr:nth-child(2n)  td{background:#cccccc; }
+table.listjobs tr:nth-child(2n+1) td{background:#eeeeee; }
+
+
+table.listclients { width:400px;}
+table.listclients tr td {padding:5px;}
+table.listclients tr th {padding:5px;text-align:left;}
+table.listclients tr:nth-child(2n)  td{background:#cccccc; text-align:left;}
+table.listclients tr:nth-child(2n+1) td{background:#eeeeee; text-align:left;}
+
+table.listusers { width:1000px;}
+table.listusers tr td {padding:5px; font-size:12px;text-align:left;}
+table.listusers tr th {padding:5px;text-align:left;}
+table.listusers tr:nth-child(2n)  td{background:#cccccc; }
+table.listusers tr:nth-child(2n+1) td{background:#eeeeee; }
+
+
+table.addjobsheet {width:1000px;}
+table.addjobsheet  tr td, table.addjobsheet tr th {text-align:left;}
+table.addjobsheet  tr td select {width:170px;}
+table.listjobsheets { width:1000px;}
+table.listjobsheets tr td {padding:5px; font-size:12px;text-align:left;}
+table.listjobsheets tr th {padding:5px;text-align:left;}
+table.listjobsheets tr:nth-child(2n)  td{background:#cccccc; }
+table.listjobsheets tr:nth-child(2n+1) td{background:#eeeeee; }
+table.listjobsheets tr:nth-child(2n)  td.date{background:#ffffff; }
+table.listjobsheets tr:nth-child(2n+1) td.date{background:#ffffff; }
+table.listjobsheets tr:nth-child(2n)  td.buttons{background:#ffffff; }
+table.listjobsheets tr:nth-child(2n+1) td.buttons{background:#ffffff; }
+table.form-addclient tr th{text-align:left;}
+
+table.searchresultslist {width:1000px;}
+table.searchresultslist tr td {padding:5px; font-size:12px;text-align:left;}
+table.searchresultslist tr th {padding:5px;text-align:left;}
+table.searchresultslist tr:nth-child(2n)  td{background:#cccccc; }
+table.searchresultslist tr:nth-child(2n+1) td{background:#eeeeee; }
+
+
+table.searchjobsheet tr td {padding:5px; font-size:12px;text-align:left;}
+table.searchjobsheet tr th {padding:5px;text-align:left;}
+
+table tr td.date {background:#ffffff;font-weight:bold; padding:20px 5px; font-size:14px; color:#08c;}
+
+#submitjobsheetsaturday {display:none;}
+#submitjobsheetsunday {display:none;}
+#submitjobsheetmonday {display:none;}
+#submitjobsheettuesday {display:none;}
+#submitjobsheetwednesday {display:none;}
+#submitjobsheetthursday {display:none;}
+#submitjobsheetfriday {display:none;}
+
+
+#deletenewrowsaturday {display:none;}
+#deletenewrowsunday {display:none;}
+#deletenewrowmonday {display:none;}
+#deletenewrowtuesday {display:none;}
+#deletenewrowwednesday {display:none;}
+#deletenewrowthursday {display:none;}
+#deletenewrowfriday {display:none;}
+
+
+#sunday_totalhrs {font-weight:bold; font-size:14px;}
+#monday_totalhrs {font-weight:bold; font-size:14px;}
+#tuesday_totalhrs {font-weight:bold; font-size:14px;}
+#wednesday_totalhrs {font-weight:bold; font-size:14px;}
+#thursday_totalhrs {font-weight:bold; font-size:14px;}
+#friday_totalhrs {font-weight:bold; font-size:14px;}
+#saturday_totalhrs {font-weight:bold; font-size:14px;}
+
+table tr th.currentpage a.selected {font-weight:bold;}
+table tr th.currentpage a {font-weight:normal;}
+
+ul.list {margin-left:0px;}
+ul.list li p{font-size:12px;line-height:16px;}
+.hero-unit {padding:20px !important;}
+.hero-unit ul.list li {list-style:none;line-height:16px;padding: 20px 0 20px 20px; margin-top:20px; border-bottom:5px solid #777; background:#fff;}
+.hero-unit ul.list li ul li {border-bottom:none;}
+a.readmore  {font-style:italic; font-family:georgia; font-size:13px;}
+span.publishdate {font-size:12px;}
+span.author {font-size:12px;}
+
+ul#genrelist {margin-left:0px;}
+ul#genrelist li:first-child {margin-left:0px;}
+ul#genrelist li { cursor:pointer; display:inline; padding:4px 4px; font-size:11px; background:#08c; color:#fff; font-weight:bold; margin-left:10px;}
+
+ul#genrelist li.selected {background:#fff; color:#08c;}
+
+.smallfont {font-size:11px; font-weight:normal;}
+
+/* Calendar view style*/
+
+#calendar-container{
+    padding: 10px;
+    width: 900px;
+    height:auto;
+	overflow:auto;
+    text-align: center;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    font-size: 16px;
+    font-family: Arial;
+    background-image: linear-gradient(#fff, #d3d3d3);
+}
+
+#calendar-container>div{
+    padding: 0;
+    margin-bottom: 10px;
+}
+
+#calendar-month-year{
+    margin: 5px;
+}
+.calendar-dates {
+	height:300px;
+	
+}
+.calendar-dates table{
+	text-align:center;
+	margin: 0 auto;
+}
+.calendar-dates table tr:first-child td{ 
+	font-weight:bold;
+	
+}
+.calendar-dates table tr td{
+    padding: 5px;
+	font-size:14px;
+}
+.monthtitle {
+	font-weight:bold;
+}
+.calendar-dates table tr td.highlight{
+	background:#08c;
+}
+.calendar-dates table tr td.officialholiday {
+	background:green;
+}
+.calendar-dates {
+	float:left;
+}
+.datecolumns {
+	width:2px;
+	height:18px;
+	float:left;
+	border-top:1px solid #ccc;
+	border-bottom:1px solid #ccc;
+}
+.datecolumns.highlighted {
+	background:#09e;
+}
+.datecolumns.red {
+	background:white;
+}
+
+.datecolumns.sick {
+	background:#ff0000;
+}
+
+.datecolumns.unpaid {
+	background:#ffa500;
+}
+.datecolumns.casual {
+	background:#808080;
+}
+.datecolumns.officialholiday {
+	background:green;
+}
+
+.leavetypes{
+	width:20px;
+	height:20px;
+	float:left;
+	margin-left:10px;
+	
+}
+.leavetypes.holiday_official {
+	background:green;
+}
+.leavetype {float:left;padding-left:4px;font-size:12px;}
+.sickcol{background:#ff0000;} 
+.annualcol{background:#09e;} 
+.casualcol{background:#808080;}
+.unpaidcol{background:#ffa500;}
+
+ul.leavetypes-2 li {
+	display:inline;
+	padding: 20px 14px;
+	
+}
+.calendar-dates table tr td.sick{background:#ff0000;}
+.calendar-dates table tr td.unpaid{background:#ffa500;}
+.calendar-dates table tr td.casual{background:#808080;}
+.calendar-dates table tr td.annual{background:#09e;}
+
+
+.vac-col-1,.vac-col-2 {
+	float:left;
+}
+.hero-unit {
+	overflow:auto;
+}
+
+.vac-col-1 {
+	width:100%;
+	/*float:left;*/
+}
+
+/*.vac-col-2 {
+	width:25%;
+	float:left;
+}*/
+
+.calendar-dates {
+	float:left;
+	width:24%;
+}
+.vac-col-2:after {
+	clear:both;
+	
+}
+table.vacationdetails tr:first-child {
+	background:#dddddd;
+}
+table.vacationdetails tr:nth-child(even){
+	background:#eee;	
+}
+table.vacationdetails tr:nth-child(odd){
+	background:#ddd;	
+}
+table.vacationdetails tr th {
+	font-size:12px;
+	background:#ccc;
+	
+}
+
+
+
+
+table.vacationdetails tr td {
+	border-bottom:1px solid #ddd;
+	font-size:14px;
+}
+table.vacationdetails tr td .datecolumns:first-child {
+	border-left:1px solid #ccc;
+}
+table.vacationdetails tr td .datecolumns:last-child {
+	border-right:1px solid #ccc;
+}
+
+
+table.leaverequests tr:first-child{
+	background:#dddddd;
+}
+table.leaverequests tr:nth-child(even){
+	background:#eee;	
+}
+table.leaverequests tr:nth-child(odd){
+	background:#ddd;	
+}
+table.leaverequests tr th {
+	font-size:16px;
+	background:#ccc;
+	text-align:left;
+	
+}
+table.leaverequests tr td {
+	border-bottom:1px solid #ddd;
+	font-size:14px;
+}
+
+input[type="checkbox"] {
+	margin:0;
+}
+/* Calendar view style ends here*/
+@media screen and (min-width: 1300px) {
+	.container, .navbar-static-top .container, .navbar-fixed-top .container, .navbar-fixed-bottom .container {
+		width:1300px !important;
+	}
+	table.listjobs {width:1250px !important;}	
+}
+
+@media screen and (min-width: 1500px) {
+	.container, .navbar-static-top .container, .navbar-fixed-top .container, .navbar-fixed-bottom .container {
+		width:1500px !important;
+	}
+	table.listjobs {width:1450px !important;}	
+}
