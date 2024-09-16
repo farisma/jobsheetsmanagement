@@ -291,3 +291,10 @@ input[type="checkbox"] {
 	}
 	table.listjobs {width:1450px !important;}	
 }
+
+.quote_field, .division_field,.retainer_quote_field, .retainer_division_field,.consolidated_quote_field, .consolidated_division_field {
+	display: none !important;
+}
+.quote_field.show, .division_field.show, .retainer_quote_field.show, .retainer_division_field.show,.consolidated_quote_field.show, .consolidated_division_field.show {
+	display: inline-block !important;
+}

@@ -201,8 +201,13 @@
 				
 				$project_type_nr = substr($selectedOption,0,-1); // to remove the last /
 				//echo $project_type_nr;
+				$division = $this->input->post('company_division');
+				if($division == '') $division = NULL;
+				$quoted_amount = $this->input->post('quoted_amount');
+				if($quoted_amount == null) $quoted_amount = 0;
 				$jobname = $this->input->post('jobname');
 				$jobseq =  substr($jobno,0,4);
+				//echo "division".$division;
 				$jobs = Array(
 				"clientid"  =>  $client_id,
 				"date" => $date,
@@ -214,6 +219,8 @@
 				"approved" => $clientApproval,
 				"jobseqno"=>$jobseq,
 				"invoiced" => $invoiced,
+				"division" => $division,
+				"quote"=> $quoted_amount,
 				"projecttype" => $project_type_nr,
 				"jobraisedby" => $this->username
 				);
@@ -319,7 +326,10 @@
 				$selectedOption.= $value.'/'; // I am separating Values with a comma (,) so that I can extract data using explode()
 	            }
 				$project_type_rc = substr($selectedOption,0,-1); // to strip the last /
-				
+				$division = $this->input->post('company_division');
+				if($division == '') $division = NULL;
+				$quoted_amount = $this->input->post('quoted_amount');
+				if($quoted_amount == null) $quoted_amount = 0;
 				$jobseq =  substr($jobno,0,4);
 				$month_jobno =  substr($jobno,5,2); // month no to be saved in the database to find next jobseqno.
 				$year_jobno =  substr($date,0,4); // year no to be saved in the database to find next jobseqno.
@@ -373,6 +383,8 @@
 				"ekbillable" => $billable, //ekbillable is column in the db table that is used for retaining jobs for both ek and non ek jobs.
 				"approval" => $approval,
 				"invoiced" => $invoiced,
+				"division" => $division,
+				"quote"=> $quoted_amount,
 				"consolidated_check" => $addto_consolidated,
 				"consolidated_jobno" => $consolidatedJobNo,
 				"monthly_consol_jobno" => $monthly_consol_jobno_for_retainers,
@@ -478,6 +490,10 @@
 				$selectedOption.= $value.'/'; // I am separating Values with a comma (,) so that I can extract data using explode()
 				}
 				$project_type_ccb = substr($selectedOption,0,-1); // to strip the last /
+				$division = $this->input->post('company_division');
+				if($division == '') $division = NULL;
+				$quoted_amount = $this->input->post('quoted_amount');
+				if($quoted_amount == null) $quoted_amount = 0;
 				$jobseq =  substr($jobno,0,4);
 				$month_jobno =  substr($jobno,5,2); // month no to be saved in the database to find next jobseqno.
 				$year_jobno =  substr($date,0,4); // year no to be saved in the database to find next jobseqno.
@@ -506,7 +522,8 @@
 					"ekbillable" => $billable, //ekbillable is column in the db table that is used for retaining jobs for both ek and non ek jobs.
 					"approval" => $approval,
 					"invoiced" => $invoiced,								
-
+					"division" => $division,
+					"quote" => $quoted_amount,
 					"jobraisedby" => $this->username
 					);
 				 $insert = $this->Clients_model->add_consolidatedBC_job($jobs);
@@ -1096,6 +1113,11 @@
 				$invoiced  = $this->input->post('invoiced');
 				$ekbillable = $this->input->post('ekbillable');
 				$jobclosed = $this->input->post('jobclosed');
+				if($jobclosed == "y") $dateofclosure = date('Y-m-d'); else $dateofclosure = null;
+				$quote = $this->input->post('quoted_amount');
+				if($quote == null) $quote = 0;
+				$division = $this->input->post('company_division');
+				if($division == '') $division = NULL;
 				$retainerscope = $this->input->post('retainerscope');
 				
 
@@ -1139,11 +1161,14 @@
 				"jobname" => $jobname,
 				"invoiced" =>  $invoiced,
 				"jobclosed"=>$jobclosed,
+				"dateofclosure"=> $dateofclosure,
 				"ekbillable" =>  $ekbillable,
 				"retainerscope" =>$retainerscope,
 				"consolidated_check" =>$consolidated_check,
 				"consolidated_jobno" =>$consolidated_jobno,
-				"projecttype" => $project_type
+				"projecttype" => $project_type,
+				"quote" => $quote,
+				"division" => $division
 				);
 				
 				$update  = $this->Clients_model->update_job($jobs);
@@ -1172,7 +1197,7 @@
 						$cc = $this->accountant_emailid;
 						$bcc = "";
 						$fullname = $full_name;
-						$this->Vacation_model->sendemailnotification($from,$to,$emailText,$fullname,$cc,$bcc,$subject);
+						//$this->Vacation_model->sendemailnotification($from,$to,$emailText,$fullname,$cc,$bcc,$subject);
 					}
 					else if($jobclosed == "y") {
 						$toemail = $this->b_emailid;
@@ -1210,6 +1235,11 @@
 			}
 			$projecttypes =  $this->Clients_model->listProjectTypes();
 			$data["project_types"] = $projecttypes;
+			//echo $jobIdToBeEdited;
+			$cl_id = $this->Clients_model->getClientIDbyJobid($jobIdToBeEdited);
+			//print_r( $cl_id );
+			if($cl_id != null) $divisions =  $this->Clients_model->getDivisionbyClientID($cl_id);
+			$data["clientdivisions"] = $divisions;
 			$this->render_page('pages/editjob',$data);
 			
 		}
@@ -1253,5 +1283,362 @@
 			$this->render_page('pages/editclient',$data);
 			
 		}
+
+		public function viewreports(){
+			
+			//$this->render_page('pages/view_reports');
+			$client = $this->input->post('clientname');
+			$reportdate = $this->input->post('reportdate');
+						
+			
+			if($client != null && $reportdate !=null)			
+			  {
+				$datesplit = explode(' ', $reportdate);
+				$month = $datesplit[0];
+			    $year = $datesplit[1];
+				$jobs = Array(
+					"clientid" => $client,
+					"month" => $month,
+					"year" => $year
+				);
+				
+				$jobsfetched  =  $this->Clients_model->listJobsReport($jobs); 
+			    $data["jobs"] = $jobsfetched;
+				$data['isadmin']  =  $this->ion_auth->is_admin();
+				$data['jobsearchparams'] = $jobs;
+				$this->render_page('pages/view_reports',$data);
+			  }
+			  else {
+				$this->render_page('pages/view_reports');
+			  }
+			
+		}
+
+		public function getmonthname($monthno) {
+			$months = [
+				1 => 'January', 2 => 'February', 3 => 'March', 4 => 'April',
+				5 => 'May', 6 => 'June', 7 => 'July', 8 => 'August',
+				9 => 'September', 10 => 'October', 11 => 'November', 12 => 'December'
+			];
 		
+			return $months[$monthno];
+		}
+
+		public function exportmonthlyreport() {
+			
+			$client = $this->input->post('hiddenclientname');
+			$month = $this->input->post('hiddenmonth');
+			$year = $this->input->post('hiddenyear');
+			//echo $client." ".$month." ".$year;
+			$monthname = $this->getmonthname($month);
+			$clientdetail = Array(
+				"clientid" => $client,
+				"month" => $month,
+				"year" => $year
+			);
+			$divisionsperclient  =  $this->Clients_model->getDivisionsPerMonthPerClient($clientdetail); 
+			//echo "month".$month;
+			if($client != null && $month != null && $year != null) {
+				$jobs = Array(
+					"clientid" => $client,
+					"month" => $month,
+					"year" => $year
+				);
+			$jobsfetched  =  $this->Clients_model->listJobsReport($jobs); 
+				//load our new PHPExcel library
+			$this->load->library('excel');
+			//activate worksheet number 1
+			$this->excel->setActiveSheetIndex(0);
+			//name the worksheet
+			$this->excel->getActiveSheet()->setTitle('Timesheets ');
+			//set cell A1 content with some text
+			
+			
+			//set aligment to center for that merged cell (A1 to D1)
+			$this->excel->getActiveSheet()->getStyle('A1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$this->excel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE)->setFitToWidth(1)->setFitToHeight(0);
+			$this->excel->getActiveSheet()->getHeaderFooter()->setOddHeader('&C&B&16' . 
+			$this->excel->getProperties()->getTitle())
+			->setOddFooter('&CPage &P of &N');
+			$col = 'A';
+			$rownum = 1;
+			$colnum = 1;
+			$this->excel->getActiveSheet()->setCellValueByColumnAndRow(0,1,$monthname.", ".$year." Recharge Report"); 
+			$this->excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(true);
+			
+			// $this->excel->getActiveSheet()
+            // ->getStyleByColumnAndRow(0, 1)
+            // ->getAlignment()
+            // ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+			$k=2; // rownumber for the second row
+			for($col = 'A'; $col !== 'I'; $col++) {
+				$this->excel->getActiveSheet()->getColumnDimension($col)    
+				->setAutoSize(true); //set the column width auto
+				$this->excel->getActiveSheet()->getStyle($col . $k)->getFont()->setBold(true); //set font style bold forthe first row (title)
+			}
+			
+			$i=1;
+			$rownum = 2; //row starts feom second coz the first reserved for the titles
+			
+			//setting the headers
+			$this->excel->getActiveSheet()->setCellValueByColumnAndRow(0,2,"Sl. No.");	
+			$this->excel->getActiveSheet()->setCellValueByColumnAndRow(1,2,"Division");	
+			$this->excel->getActiveSheet()->setCellValueByColumnAndRow(2,2,"Job");			
+			$this->excel->getActiveSheet()->setCellValueByColumnAndRow(3,2,"Job Name");			
+			$this->excel->getActiveSheet()->setCellValueByColumnAndRow(4,2,"Description");
+			$this->excel->getActiveSheet()->setCellValueByColumnAndRow(5,2,"Date");
+			$this->excel->getActiveSheet()->setCellValueByColumnAndRow(6,2,"Amount");
+			// $this->excel->getActiveSheet()->setCellValueByColumnAndRow(7,2,"Status");
+			$this->excel->getActiveSheet()->setCellValueByColumnAndRow(7,2,"Total");
+
+			// set the data
+			$columnnum = 0;
+			$rownum = 3;
+			$this->excel->getActiveSheet()->setCellValueByColumnAndRow(0,$rownum,"Retainer Jobs"); 
+			$this->excel->getActiveSheet()->getStyle('A'.$rownum)->getFont()->setBold(true);
+			$rownum = $rownum + 1;
+			$i = 1;
+			$totalvalueofmonth = 0;
+			// for retainer jobs
+			if(isset($divisionsperclient)) {
+				if(!empty($divisionsperclient)) {
+				foreach($divisionsperclient as $key=>$value) {
+					    $currentdiv = $value['division'];
+						$currentdivcolor = $this->Clients_model->getColorForDivision($currentdiv);
+						
+					    $jobsperdivision = $this->Clients_model->getJobsPerDivision($clientdetail,$currentdiv,true); //third paramaeter is for retainer
+						//print_r($jobsperdivision);
+						if(!empty($jobsperdivision)) {
+						$countofjobs = count($jobsperdivision);
+						$count = 1;
+						$totalvalueperdiv = 0;
+						foreach($jobsperdivision as $key1=>$value1) { 
+							// if($value1['jobclosed'] == 'y' ) $status = "Closed"; else $status = '';
+								$this->excel->getActiveSheet()->setCellValueByColumnAndRow(0,$rownum,$i);   
+								$this->excel->getActiveSheet()->setCellValueByColumnAndRow(1,$rownum,$value1['division']);
+								$this->excel->getActiveSheet()->setCellValueByColumnAndRow(2,$rownum,$value1['jobno']);					
+								$this->excel->getActiveSheet()->setCellValueByColumnAndRow(3,$rownum,$value1['jobname']);
+								$this->excel->getActiveSheet()->setCellValueByColumnAndRow(4,$rownum,$value1['description']);
+								$this->excel->getActiveSheet()->setCellValueByColumnAndRow(5,$rownum,date('d/M/Y',strtotime($value1['date'])));
+								$this->excel->getActiveSheet()->setCellValueByColumnAndRow(6,$rownum,$value1['quote']);
+								// $this->excel->getActiveSheet()->setCellValueByColumnAndRow(7,$rownum,$status);
+								$totalvalueperdiv = $totalvalueperdiv + $value1['quote'];
+								$totalvalueofmonth = $totalvalueofmonth + $value1['quote'];
+								if($countofjobs == $count) $this->excel->getActiveSheet()->setCellValueByColumnAndRow(7,$rownum,$totalvalueperdiv);
+								for($col = 'A'; $col !== 'I'; $col++) {
+									$this->excel->getActiveSheet()->getStyle($col.$rownum)->applyFromArray(
+										array(
+											'fill' => array(
+												'type' => PHPExcel_Style_Fill::FILL_SOLID,
+												'color' => array('rgb' => $currentdivcolor['color']) 
+											),
+											'font' => array(
+												'color' => array('rgb' => $currentdivcolor['textcolor']),
+											)
+										)
+									);
+								}
+
+								$columnnum++;$rownum++;$i++;
+								$count++;
+						}
+						
+					}														
+					
+				}
+			}
+			} 
+					$rownum = $rownum + 2;
+					$this->excel->getActiveSheet()->getStyle('A' . $rownum)->getFont()->setBold(true);
+					$this->excel->getActiveSheet()->setCellValueByColumnAndRow(0,$rownum,"Non retainer Billing"); 
+					$rownum = $rownum + 1;
+					$j = 1;
+
+			// for non retainer jobs
+  
+			if(isset($divisionsperclient)) {  
+				$k = 1;
+				if(!empty($divisionsperclient)) {
+					foreach($divisionsperclient as $key=>$value) {
+							$currentdiv = $value['division'];
+							$currentdivcolor = $this->Clients_model->getColorForDivision($currentdiv);
+							$jobsperdivisionnonretainer = $this->Clients_model->getJobsPerDivision($clientdetail,$currentdiv,false); //third paramaeter is for retainer
+							//print_r($jobsperdivision);
+							if(!empty($jobsperdivisionnonretainer)) {
+								$countofjobs_nr = count($jobsperdivisionnonretainer);
+								$count_nr = 1;
+								$totalvalueperdiv_nr = 0;
+							foreach($jobsperdivisionnonretainer as $key1=>$value1) { 
+								// if($value1['jobclosed'] == 'y' ) $status = "Closed"; else $status = '';
+									$this->excel->getActiveSheet()->setCellValueByColumnAndRow(0,$rownum,$k);   
+									$this->excel->getActiveSheet()->setCellValueByColumnAndRow(1,$rownum,$value1['division']);
+									$this->excel->getActiveSheet()->setCellValueByColumnAndRow(2,$rownum,$value1['jobno']);					
+									$this->excel->getActiveSheet()->setCellValueByColumnAndRow(3,$rownum,$value1['jobname']);
+									$this->excel->getActiveSheet()->setCellValueByColumnAndRow(4,$rownum,$value1['description']);
+									$this->excel->getActiveSheet()->setCellValueByColumnAndRow(5,$rownum,date('d/M/Y',strtotime($value1['date'])));
+									$this->excel->getActiveSheet()->setCellValueByColumnAndRow(6,$rownum,$value1['quote']);
+									// $this->excel->getActiveSheet()->setCellValueByColumnAndRow(7,$rownum,$status);
+									$totalvalueperdiv_nr = $totalvalueperdiv_nr + $value1['quote'];
+									$totalvalueofmonth = $totalvalueofmonth + $value1['quote'];
+								    if($countofjobs_nr == $count_nr) $this->excel->getActiveSheet()->setCellValueByColumnAndRow(7,$rownum,$totalvalueperdiv_nr);
+									for($col = 'A'; $col !== 'I'; $col++) {
+										$this->excel->getActiveSheet()->getStyle($col.$rownum)->applyFromArray(
+											array(
+												'fill' => array(
+													'type' => PHPExcel_Style_Fill::FILL_SOLID,
+													'color' => array('rgb' => $currentdivcolor['color']) 
+												),
+												'font' => array(
+												     'color' => array('rgb' => $currentdivcolor['textcolor']),
+												)
+											)
+										);
+									}
+									$columnnum++;$rownum++;$k++;
+									$count_nr++;
+							}
+							
+						}
+					}
+				}
+
+			}
+			$this->excel->getActiveSheet()->setCellValueByColumnAndRow(6,$rownum,"Total amount");
+			$this->excel->getActiveSheet()->setCellValueByColumnAndRow(7,$rownum,$totalvalueofmonth);
+			$this->excel->getActiveSheet()->getStyle('G' . $rownum)->getFont()->setBold(true);
+			$this->excel->getActiveSheet()->getStyle('H' . $rownum)->getFont()->setBold(true);	 
+            $rownum = $rownum+4;
+			$divisionlegend = $this->Clients_model->getAllDivisionsandColors();
+			//print_r($divisionlegend);
+			$legendcount = 0;
+			for($i=0;$i<5;$i++) {
+				for($col = 1; $col <= 8; $col+=2) {					
+						if(isset($divisionlegend[$legendcount]['division']))	
+						$this->excel->getActiveSheet()->setCellValueByColumnAndRow($col,$rownum,$divisionlegend[$legendcount]['division']);
+						
+						if($col == 1) $newcol = "A";
+						else if($col == 3) $newcol = "C";
+						else if($col == 5) $newcol = "E";
+						else if($col == 7) $newcol = "G";
+						
+						if(isset($divisionlegend[$legendcount]['division']))	{						
+							$this->excel->getActiveSheet()->getStyle($newcol.$rownum)->applyFromArray(
+											array(
+												'fill' => array(
+													'type' => PHPExcel_Style_Fill::FILL_SOLID,
+													'color' => array('rgb' => $divisionlegend[$legendcount]['color']) 
+												),
+												
+											)
+										);
+						}
+						$legendcount++;
+				}
+				
+				$rownum++;
+			}
+			
+			$filename='jobspermonth.xls'; //save our workbook as this file name
+			header('Content-Type: application/vnd.ms-excel'); //mime type
+			header('Content-Disposition: attachment;filename="'.$filename.'"'); //tell browser what's the file name
+			header('Cache-Control: max-age=0'); //no cache
+			
+			//save it to Excel5 format (excel 2003 .XLS file), change this to 'Excel2007' (and adjust the filename extension, also the header mime type)
+			//if you want to save it as .XLSX Excel 2007 format
+			$objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'Excel2007');  
+			//force user to download the Excel file without writing it to server's HD
+			$objWriter->save('php://output');
+			}
+			//$this->render_page('pages/view_reports');
+		}
+		
+		public function add_division(){
+
+			$clients = $this->Clients_model->getClients();
+			$data["clients"] = $clients;
+			$this->form_validation->set_rules('divisionname', 'Division field', 'required');
+			if ($this->form_validation->run() == true) {
+                $clientcode = $this->input->post('client');
+				$divisionname = $this->input->post('divisionname');
+				$divisioncolor = $this->input->post('divisioncolor');
+				if($divisioncolor == '') $divisioncolor = NULL;
+				$divisiontextcolor = $this->input->post('divisiontextcolor');
+				if($divisiontextcolor == '') $divisiontextcolor = NULL;
+				$divisions = Array(
+					"division" => $divisionname,
+					"client" => $clientcode,
+					"color" => $divisioncolor,
+					"textcolor" => $divisiontextcolor
+				);
+				$insert = $this->Clients_model->add_division($divisions);
+				if($insert)
+				{
+					$data['message'] = "Division has been added succesfully.";
+				}
+				else 
+				{
+					$data['message'] = "Division hasn't been added succesfully."; 
+				}
+		    }
+
+			$this->render_page('pages/add_division',$data);	
+		}
+
+		public function list_divisions() {
+			$divisions = $this->Clients_model->listDivisions();
+			$data["divisions"] = $divisions;
+			$this->render_page('pages/list_divisions',$data);	
+		}
+
+		public function edit_division(){
+			$divisionId =  $this->uri->segment(2);     
+            
+			$clients = $this->Clients_model->getClients();
+			$data["clients"] = $clients;
+			//$this->body_class[] = 'addclient';
+			$this->page_title = 'Edit division';
+			$this->current_section = 'Add division';
+            $this->form_validation->set_rules('divisionname', 'Division field', 'required');
+			if ($this->form_validation->run() == true) {
+                $divisionname = $this->input->post('divisionname');
+				$client = $this->input->post('client');
+				$color = $this->input->post('divisioncolor');
+				$textcolor = $this->input->post('divisiontextcolor');
+				 $divisionentry = Array(
+                "id" => $divisionId,
+				"client" => $client,
+                "division"=> $divisionname,
+				"color"=> $color,
+				"textcolor"=> $textcolor,
+                );
+                $updateDivision  =  $this->Clients_model->updateDivision($divisionentry);
+				if($updateDivision)
+				{
+					$data['message'] = "Division has been updated successfully.";
+				}
+				else 
+				{
+					$data['message'] = "Division has not been updated successfully."; 
+				}
+			}
+			$divisiondetails  =  $this->Clients_model->getDivisionbyID($divisionId);
+			$data['division'] = $divisiondetails;
+		    $this->render_page('pages/edit_division',$data);
+		}
+		public function delete_division(){
+			$divisionId =  $this->uri->segment(2);     
+            $delete = $this->Clients_model->deleteDivision($divisionId);
+			$divisions = $this->Clients_model->listDivisions();
+			$data["divisions"] = $divisions;
+			if($delete) {$data["message"] = "Division has been deleted succesfully.";} else {$data["message"] = "Deletion Unsuccesfull";}
+			
+			$this->render_page('pages/list_divisions',$data);
+		}
+
+
+		public function find_divisions_by_client() {
+			$clientid =  $this->uri->segment(2); 
+			$divisions = $this->Clients_model->getDivisionbyClientID($clientid);
+			echo json_encode($divisions);	
+		}
 	}	

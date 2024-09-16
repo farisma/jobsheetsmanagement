@@ -14,7 +14,7 @@
 | path to your installation.
 |
 */
-$config['base_url']	= 'https://www.theandongroup.com/jobsheetmanagement/';
+$config['base_url']	= 'https://www.theandongroup.com/jobsheetstest/';
 
 /*
 |--------------------------------------------------------------------------

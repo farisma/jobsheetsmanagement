@@ -68,6 +68,8 @@
 			"jobseqno"=>$jobs["jobseqno"],
 			"invoiced"=>$jobs["invoiced"],
 			"projecttype" => $jobs["projecttype"],
+			"division" => $jobs["division"],
+			"quote"=> $jobs["quote"],
 			"consolidatedbillingcustomer" => $jobs['consolidatedbillingcustomer'],
 			"jobraisedby" => $jobs['jobraisedby']
 			);
@@ -114,11 +116,14 @@
 			"retainerscope" => $jobs["retainerscope"],
 			"ekbillable" => $jobs["ekbillable"],               
 			"invoiced" => $jobs["invoiced"],
+			"division" => $jobs["division"],
+			"quote"=> $jobs["quote"],
 			"consolidated_check" => $jobs['consolidated_check'],
 			"consolidated_jobno" => $jobs['consolidated_jobno'],
 			"monthly_consol_jobno" => $jobs['monthly_consol_jobno'],
 			"jobraisedby" => $jobs['jobraisedby']
 			);
+			
 			$this->db->insert('jobs',$data);    
 			return ($this->db->affected_rows() != 1) ? false : true;
 			
@@ -148,6 +153,8 @@
 				"consolidatedB_c_jobnoformonth" => $jobs["consolidatedB_c_jobnoformonth"],
 				"approved" => $jobs["approval"],
 				"invoiced" => $jobs["invoiced"],
+				"division" => $jobs["division"],
+			    "quote"=> $jobs["quote"],
 				"ekbillable" => $jobs["ekbillable"],											
 				"jobraisedby" => $jobs['jobraisedby']
 			);
@@ -625,7 +632,7 @@
 		
 		public function selectJobById ($id)
 		{
-			$query = $this->db->query("select t1.id,t1.date,t1.job_no,t2.id as clientid,t2.clientname,t1.jobname,t1.description,t1.projecttype,t1.approved,t1.invoiced,t1.jobclosed,t1.ekbillable,t1.retainerscope,t1.retainer_c_job,t1.consolidated_check,t1.consolidated_jobno,t1.monthly_consol_jobno,t1.consolidatedB_c_job from jobs as t1,clients as t2 where t2.id = t1.client_id and t1.id=".$id."");
+			$query = $this->db->query("select t1.id,t1.date,t1.job_no,t2.id as clientid,t2.clientname,t1.jobname,t1.description,t1.projecttype,t1.approved,t1.invoiced,t1.jobclosed,t1.ekbillable,t1.retainerscope,t1.retainer_c_job,t1.consolidated_check,t1.consolidated_jobno,t1.monthly_consol_jobno,t1.consolidatedB_c_job,t1.quote as quoted_amount, t1.division from jobs as t1,clients as t2 where t2.id = t1.client_id and t1.id=".$id."");
 			
 			if ($query->num_rows() > 0)
 			{
@@ -789,12 +796,14 @@
 		"description" => $job["description"],
 		"invoiced"=>$job["invoiced"],
 		"jobclosed"=>$job["jobclosed"],
+		"dateofclosure"=>$job["dateofclosure"],		
 		"ekbillable"=>$job["ekbillable"],
 		"retainerscope" => $job["retainerscope"],
 		"consolidated_check" =>$job["consolidated_check"],
 		"consolidated_jobno" =>$job["consolidated_jobno"],
-		"projecttype" => $job["projecttype"]
-		
+		"projecttype" => $job["projecttype"],
+		"quote" => $job["quote"],
+		"division" => $job["division"]		
 		);
 		
 		$id = $job["id"];
@@ -871,5 +880,172 @@
 		$query =  $this->db->query("update clients set enabled='n' where id='".$clientid."'");
 		return ($this->db->affected_rows() != 1) ? false : true;
 		}
+
+		public function listJobsReport($jobsdetails) {
+			$clientid = $jobsdetails['clientid'];
+			$year = $jobsdetails['year'];
+			$month = $jobsdetails['month'];
+			
+			$query = $this->db->query("SELECT t1.id,t1.description,t1.date,t1.job_no,t1.jobname,t1.quote,t1.division,t1.jobclosed,t1.retainer_c_job,t1.consolidatedB_c_job,t2.id,t2.division FROM jobs as t1,divisions as t2 WHERE t1.client_id = '".$clientid."' and YEAR(t1.dateofclosure) = '".$year."' and MONTH(t1.dateofclosure) = '".$month."' and t1.jobclosed='y' and t1.division = t2.id order by t1.division");    
+				
+			if ($query->num_rows() > 0)
+			{
+				$i = 0;
+				$k=0;
+				foreach ($query->result() as $row)
+				{
+					if ($row->retainer_c_job == 'y' or $row->consolidatedB_c_job == 'y') {
+					//if its a consolidated or retainer job it should be grouped together
+					$result['retainerconsol'][$i]["id"] =  $row->id;
+					$result['retainerconsol'][$i]["date"] =  $row->date;
+					$result['retainerconsol'][$i]["jobno"] =  $row->job_no;					
+					$result['retainerconsol'][$i]["jobname"] =  $row->jobname;
+					$result['retainerconsol'][$i]["description"] =  $row->description;
+					$result['retainerconsol'][$i]["quote"] =  $row->quote;
+					$result['retainerconsol'][$i]["division"] =  $row->division;
+					$result['retainerconsol'][$i]["jobclosed"] =  $row->jobclosed;					
+					$i++;
+				   }
+				   else {
+					$result['nonretainer'][$k]["id"] =  $row->id;
+					$result['nonretainer'][$k]["date"] =  $row->date;
+					$result['nonretainer'][$k]["jobno"] =  $row->job_no;					
+					$result['nonretainer'][$k]["jobname"] =  $row->jobname;
+					$result['nonretainer'][$k]["description"] =  $row->description;
+					$result['nonretainer'][$k]["quote"] =  $row->quote;
+					$result['nonretainer'][$k]["division"] =  $row->division;
+					$result['nonretainer'][$k]["jobclosed"] =  $row->jobclosed;	
+					$k++;
+				   }
+				}
+				
+				return $result;
+			}
+			return null;
+		}
 		
-		}		
+
+		public function add_division($division){
+			$data = array(
+				"division" => $division["division"],
+				"client" => $division["client"],
+				"color" => $division["color"],
+				"textcolor" => $division["textcolor"]
+				);
+				$this->db->insert('divisions',$data);    
+				return ($this->db->affected_rows() != 1) ? false : true;
+		}
+		public function listDivisions(){ 
+			$query = $this->db->query("select t1.id,t1.client,t1.division,t2.clientname from divisions as t1,clients as t2 where t1.client = t2.id order by t1.id ");
+			
+			if ($query->num_rows() > 0)
+			{
+				
+				return  $query->result_array();
+			}
+		}
+
+		public function getDivisionbyID($id){
+		$query = $this->db->query("select id,client,division,color,textcolor from divisions where id='".$id."'");
+			
+			if ($query->num_rows() > 0)
+			{
+				
+				return  $query->result_array();
+			}
+		}
+		public function getDivisionbyClientID($id){
+			$query = $this->db->query("select id,division from divisions where client='".$id."'");
+			
+			if ($query->num_rows() > 0)
+			{
+				
+				return  $query->result_array();
+			}
+		}
+		public function updateDivision($division){
+
+			$id = $division["id"];
+			$data = Array(
+				"client" => $division['client'],
+				"division" => $division['division'],				
+				"color" => $division['color'],
+				"text" => $division['textcolor'],
+			);
+		$this->db->set($data);
+		$this->db->where('id',$id); 
+		$this->db->update('divisions');    
+		
+		return ($this->db->affected_rows() != 1) ? false : true;
+		}
+		public function deleteDivision($division){
+			$query =  $this->db->query("delete from divisions where id='".$division."'");
+			return ($this->db->affected_rows() != 1) ? false : true;
+			
+		}
+		public function getClientIDbyJobid($id){
+			$query = $this->db->query("select client_id from jobs where id='".$id."'");
+			if ($query->num_rows() > 0) 
+			  return $query->row()->client_id; 
+		    else return null; 		
+		}
+
+		public function getDivisionsPerMonthPerClient($clientdetails) {
+			$clientid = $clientdetails['clientid'];
+			$year = $clientdetails['year'];
+			$month = $clientdetails['month'];
+			
+			$query = $this->db->query("SELECT division FROM jobs where client_id = '".$clientid."' and YEAR(dateofclosure) = '".$year."' and MONTH(dateofclosure) = '".$month."' and jobclosed='y' and division != '' group by division;");
+			if ($query->num_rows() > 0) 
+			   return $query->result_array();
+		}
+
+		public function getColorForDivision($divisionid) {
+			$query = $this->db->query("select color,textcolor from divisions where id='".$divisionid."'");
+			if ($query->num_rows() > 0) {
+				$result['color'] = $query->row()->color; 
+				$result['textcolor'] = $query->row()->textcolor; 
+				return $result;
+			}
+			 
+		    else return null; 		
+		}
+
+		public function getAllDivisionsandColors() {
+			$query = $this->db->query("select division,color,textcolor from divisions");
+			if ($query->num_rows() > 0) {
+				return $query->result_array();
+			}
+		}
+
+		public function getJobsPerDivision($clientdetails,$division, $retainerorconsol) {
+            if($retainerorconsol == true) {
+				// if retainerorconsol is true, it should select either retainer jobs or consolidated jobs
+			  //$ret = 'y';
+			  $q = "and (retainer_c_job = 'y' or consolidatedB_c_job = 'y')";
+			} 
+			else {
+				//jobs apart from retainer or consolidated jobs
+			  $q = "and (retainer_c_job = 'n' and consolidatedB_c_job = 'n')";
+			}
+			$query = $this->db->query("SELECT t1.id,t1.description,t1.date,t1.job_no,t1.jobname,t1.quote,t1.division,t1.jobclosed,t1.retainer_c_job,t2.id,t2.division FROM jobs as t1,divisions as t2 WHERE t1.client_id = '".$clientdetails['clientid']."' and YEAR(t1.dateofclosure) = '".$clientdetails['year']."' and MONTH(t1.dateofclosure) = '".$clientdetails['month']."' and t1.jobclosed='y' and t1.division = t2.id and t1.division = '".$division."'".$q."");    
+				
+			if ($query->num_rows() > 0)
+			{
+				$i = 0;
+				foreach ($query->result() as $row) {
+				$result[$i]["id"] =  $row->id;
+				$result[$i]["date"] =  $row->date;
+				$result[$i]["jobno"] =  $row->job_no;					
+				$result[$i]["jobname"] =  $row->jobname;
+				$result[$i]["description"] =  $row->description;
+				$result[$i]["quote"] =  $row->quote;
+				$result[$i]["division"] =  $row->division;
+				$result[$i]["jobclosed"] =  $row->jobclosed;					
+				$i++;
+			    }
+				return $result;
+		   }
+		  return null;
+	}	
+}	

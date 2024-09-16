@@ -19,6 +19,38 @@
 <script type="text/javascript">
 	function getJobSeqNo(value){
 		var clientId = value;
+		var divisions_option;
+		divisions_option = $('#company_division');
+		if(clientId == 18) {
+           $(".division_field").addClass('show')
+		   $(".quote_field").addClass('show')
+				jQuery.ajax({
+					type: "GET",
+					url: "<?php echo base_url(); ?>" + "index.php/ajaxToGetDivisionsByClientID/"+clientId,
+					data: {},
+					dataType: "json",
+					success: function(res) {
+						if (res)
+						{
+							//console.log(res)
+							
+							$.each(res, function(index, value) {
+								divisions_option.append($('<option></option>').val(value.id).text(value.division));
+							});
+						}
+						else 
+						{
+							$("#show_jobno").text("Error in fetching the Job no."); 
+						}
+					}
+				});
+
+		} else {
+			$(".division_field").removeClass('show')
+			$(".quote_field").removeClass('show')
+			divisions_option.val('')
+			$('#quoted_amount').val(0)
+		}
 		jQuery.ajax({
 			type: "GET",
 			url: "<?php echo base_url(); ?>" + "index.php/ajaxToGetnonRetainerJobcodes/"+clientId,
@@ -39,8 +71,44 @@
 		});    
 	}
     
-	function getRetainerJobSeqNo()
+	function getRetainerJobSeqNo(value)
 	{
+		var clientId;
+		var divisions_option;
+		//this function is called from datepicker aswell. In that case value  will be null. then will selct the value from dropdown
+		if(value == null) clientId = $("#clientR").val(); else clientId = value;
+		divisions_option = $('#retainer_company_division');
+		if(clientId == 18) {
+			
+           $(".retainer_division_field").addClass('show')
+		   $(".retainer_quote_field").addClass('show')
+		   jQuery.ajax({
+					type: "GET",
+					url: "<?php echo base_url(); ?>" + "index.php/ajaxToGetDivisionsByClientID/"+clientId,
+					data: {},
+					dataType: "json",
+					success: function(res) {
+						if (res)
+						{
+							//console.log(res)
+							
+							$.each(res, function(index, value) {
+								divisions_option.append($('<option></option>').val(value.id).text(value.division));
+							});
+						}
+						else 
+						{
+							$("#show_jobno").text("Error in fetching the Job no."); 
+						}
+					}
+				});
+		} else {
+			$(".retainer_division_field").removeClass('show')
+			$(".retainer_quote_field").removeClass('show')
+			divisions_option.val('');
+			$('#retainer_quoted_amount').val(0)
+		}
+
 	$("td.addto_consolidated").hide();
 	var monthNames = ["Jan", "Feb", "March", "April", "May", "June","July", "Aug", "Sep", "Oct", "Nov", "Dec"];
 	var retainerClients = ["18","75"]; //Client ids apart from EKSC that are part of monthly retainers and need consolidated job no, here its mubadala
@@ -107,8 +175,42 @@
 	}
 	
 
-	function getConsolidatedBillingCJobSeqNo(){
+	function getConsolidatedBillingCJobSeqNo(value){
 		//$("td.addto_consolidated").hide();
+		var divisions_option;
+		var clientId;
+		//this function is called from datepicker aswell. In that case value  will be null. then will selct the value from dropdown
+		if(value == null) clientId = $("#clientConsolidatedB").val(); else clientId = value;
+		divisions_option = $('#consol_company_division');
+		if(clientId == 18) {
+           $(".consolidated_division_field").addClass('show')
+		   $(".consolidated_quote_field").addClass('show')
+		   jQuery.ajax({
+					type: "GET",
+					url: "<?php echo base_url(); ?>" + "index.php/ajaxToGetDivisionsByClientID/"+clientId,
+					data: {},
+					dataType: "json",
+					success: function(res) {
+						if (res)
+						{
+							//console.log(res)
+							//divisions_option = $('#consol_company_division');
+							$.each(res, function(index, value) {
+								divisions_option.append($('<option></option>').val(value.id).text(value.division));
+							});
+						}
+						else 
+						{
+							$("#show_jobno").text("Error in fetching the Job no."); 
+						}
+					}
+				});
+		} else {
+			$(".consolidated_division_field").removeClass('show')
+			$(".consolidated_quote_field").removeClass('show')
+			divisions_option.val('');
+			$('#consol_quoted_amount').val(0)
+		}
 	var monthNames = ["Jan", "Feb", "March", "April", "May", "June","July", "Aug", "Sep", "Oct", "Nov", "Dec"];
 	//var retainerClients = ["18","75"]; //Client ids apart from EKSC that are part of monthly retainers and need consolidated job no, here its mubadala
 		var clientConsolidatedB = $("#clientConsolidatedB").val();		
@@ -203,11 +305,12 @@
 	
 	function validate1()
 	{
-		var client, desc, jobno, jobname, project_type;
+		var client, desc, jobno, jobname, project_type,quoted_amount;
 		client = document.getElementById("client").value;
 		desc = document.getElementById("description").value;
 		jobname = document.getElementById("jobname").value;
 		jobno =  document.getElementById("jobno").value;
+		quoted_amount = parseInt(document.getElementById("quoted_amount").value);
 		project_type = document.getElementById("project_type_nr").value;
 		if(desc == "" || client == "" || jobname == "" || project_type == "") 
 		{
@@ -228,8 +331,15 @@
 			{
 		        document.getElementById("project_type_nr_validate1").innerHTML = "Please fill in the project type field";
 			}
+			
 			return false;
 		}
+		else if((quoted_amount != "" || quoted_amount !=0) &&  quoted_amount > 100000)
+			{
+				
+		        document.getElementById("quoted_amount_validate1").innerHTML = "Amount exceeds the maximum limit. You can only enter up 100000";
+				return false;
+			}
 		else { 
 			 grecaptcha.ready(function() {
           grecaptcha.execute('6LeQ6A4aAAAAAKe29UyIDwcqvmwikoKhAaE-80GT', {action: 'submit'}).then(function(token) {
@@ -251,12 +361,13 @@
 	
 	function validate2()
 	{
-		var client, desc, date, jobnameR,project_type;
+		var client, desc, date, jobnameR,project_type,quoted_amount;
 		client = document.getElementById("clientR").value;
 		desc = document.getElementById("descriptionR").value;
 		jobnameR =  document.getElementById("jobnameR").value;
 		date =  document.getElementById("dateR").value;
 		project_type = document.getElementById("project_type_rc").value;
+		quoted_amount = parseInt(document.getElementById("retainer_quoted_amount").value);
 
 		if(desc == "" || client == "" || date == "" || jobnameR == "" || project_type == "") 
 		{
@@ -283,6 +394,12 @@
 			}
 			return false;
 		}
+		else if((quoted_amount != "" || quoted_amount !=0) &&  quoted_amount > 100000)
+			{
+				
+		        document.getElementById("quoted_amount_validate2").innerHTML = "Amount exceeds the maximum limit. You can only enter up 100000";
+				return false;
+			}
 		else { 
 			 grecaptcha.ready(function() {
           grecaptcha.execute('6LeQ6A4aAAAAAKe29UyIDwcqvmwikoKhAaE-80GT', {action: 'submit'}).then(function(token) {
@@ -308,6 +425,7 @@
 		jobnameEK = document.getElementById("jobnameEK").value;
 		date = document.getElementById("dateEK").value;
 		project_type = document.getElementById("project_type_ekr").value;
+		
 		if(desc == "" || date == "" || jobnameEK == "" || project_type == "") 
 		{
 			if(jobnameEK == "")
@@ -328,6 +446,7 @@
 			}
 			return false;
 		}
+		
 		else { 
 			 grecaptcha.ready(function() {
           grecaptcha.execute('6LeQ6A4aAAAAAKe29UyIDwcqvmwikoKhAaE-80GT', {action: 'submit'}).then(function(token) {
@@ -348,12 +467,13 @@
 
 
 	function validate4() {
-		var client, desc, date, jobnameR,project_type;
+		var client, desc, date, jobnameR,project_type,quoted_amount;
 		client = document.getElementById("clientConsolidatedB").value;
 		desc = document.getElementById("descriptionConsolidatedBillingC").value;
 		jobnameR =  document.getElementById("jobnameConsolidatedBillingC").value;
 		date =  document.getElementById("dateConsolidatedBillingC").value;
 		project_type = document.getElementById("project_type_ccb").value;
+		quoted_amount = parseInt(document.getElementById("consol_quoted_amount").value);
 
 		if(desc == "" || client == "" || date == "" || jobnameR == "" || project_type == "") 
 		{
@@ -380,6 +500,12 @@
 			}
 			return false;
 		}
+		else if((quoted_amount != "" || quoted_amount !=0) &&  quoted_amount > 100000)
+			{
+				
+		        document.getElementById("quoted_amount_validate4").innerHTML = "Amount exceeds the maximum limit. You can only enter up 100000";
+				return false;
+			}
 		else { 
 			 grecaptcha.ready(function() {
           grecaptcha.execute('6LeQ6A4aAAAAAKe29UyIDwcqvmwikoKhAaE-80GT', {action: 'submit'}).then(function(token) {
@@ -458,6 +584,38 @@
 					</td>
 				</tr>
 				<tr>
+				   <td colspan="1"><span class="quote_field">Quote:</span></td><td colspan="1">
+				   <input type="number" id="quoted_amount" name="quoted_amount" min="1" max="100000" step="0.1" class="quote_field">		
+				   <span id="quoted_amount_validate1" style="color:red;"></span>		
+					</td>
+				</tr>
+				<tr>
+				   <td colspan="1" ><span class="division_field"> Division:</span></td><td colspan="1" >
+					   <select name="company_division" id="company_division" class="division_field">							        							
+							<!-- <option value="0"> Human Capital </option>	   
+							<option value="1"> Corporate Services </option>	 
+							<option value="2"> Group Comms  </option>	 
+							<option value="3"> BCM </option>	 
+							<option value="4"> D&TS </option>	 
+							<option value="5"> Ethics & Compliance  </option>	 
+							<option value="6"> Taxation </option>	 
+							<option value="7"> Legal </option>	 
+							<option value="8"> Construction Management </option>	 														
+							<option value="9"> Finance </option>
+							<option value="10"> Portfolio Strategy </option>
+							<option value="11"> Treasury Investor </option>
+							<option value="12"> Government Affairs </option>
+							<option value="13"> Emiratization</option>
+							<option value="14"> ERM </option>
+							<option value="15"> Responsible Investing </option>
+							<option value="16"> Group Strategy </option>
+							<option value="17"> UAE Investments </option>
+							<option value="18"> Internal Audit </option>
+							<option value="19"> Other </option> -->
+						 </select>					
+					</td>
+				</tr>
+				<tr>
 					<td colspan="2"><input type="checkbox" name="retainingContract" id="retainingContract" value="y">&nbsp;&nbsp;Retaining Customer</td>
 				</tr>
 				<tr>
@@ -481,7 +639,7 @@
 		<table>	   
 			<tr>
 				<td>Client:</td><td>    
-					<select name="clientR" id="clientR" onchange="getRetainerJobSeqNo()">
+					<select name="clientR" id="clientR" onchange="getRetainerJobSeqNo(this.value)">
 						<option value="select"> Select Client</option>           
 						<?php 
 							$i=0;
@@ -521,6 +679,38 @@
 					
 					</td>
 				</tr>
+				<tr>
+				   <td colspan="1"><span class="retainer_quote_field">Quote:</span></td><td colspan="1">
+				   <input type="number" id="retainer_quoted_amount" name="quoted_amount" min="1" max="100000" step="0.1" class="retainer_quote_field">		
+				   <span id="quoted_amount_validate2" style="color:red;"></span>		
+					</td>
+				</tr>
+				<tr>
+				   <td colspan="1" ><span class="retainer_division_field"> Division:</span></td><td colspan="1" >
+					   <select name="company_division" id="retainer_company_division" class="retainer_division_field">							        							
+							<!-- <option value="0"> Human Capital </option>	   
+							<option value="1"> Corporate Services </option>	 
+							<option value="2"> Group Comms  </option>	 
+							<option value="3"> BCM </option>	 
+							<option value="4"> D&TS </option>	 
+							<option value="5"> Ethics & Compliance  </option>	 
+							<option value="6"> Taxation </option>	 
+							<option value="7"> Legal </option>	 
+							<option value="8"> Construction Management </option>	 														
+							<option value="9"> Finance </option>
+							<option value="10"> Portfolio Strategy </option>
+							<option value="11"> Treasury Investor </option>
+							<option value="12"> Government Affairs </option>
+							<option value="13"> Emiratization</option>
+							<option value="14"> ERM </option>
+							<option value="15"> Responsible Investing </option>
+							<option value="16"> Group Strategy </option>
+							<option value="17"> UAE Investments </option>
+							<option value="18"> Internal Audit </option>
+							<option value="19"> Other </option> -->
+						 </select>					
+					</td>
+				</tr>
 			<tr>
 				<td colspan="2"><input type="checkbox" name="retainerscope" id="retainerscope" value="y">&nbsp;&nbsp;Scope of Work</td> <!-- just to confirm if the job falls under retaining contract -->
 			</tr>
@@ -549,7 +739,7 @@
 		<table>	   
 			<tr>
 				<td>Client:</td><td>    
-					<select name="clientConsolidatedB" id="clientConsolidatedB" onchange="getConsolidatedBillingCJobSeqNo()">
+					<select name="clientConsolidatedB" id="clientConsolidatedB" onchange="getConsolidatedBillingCJobSeqNo(this.value)">
 						<option value="select"> Select Client</option>           
 						<?php 
 							$i=0;
@@ -589,7 +779,38 @@
 
 					</td>
 				</tr>
-
+				<tr>
+				   <td colspan="1"><span class="consolidated_quote_field">Quote:</span></td><td colspan="1">
+				   <input type="number" id="consol_quoted_amount" name="quoted_amount" min="1" max="100000" step="0.1" class="consolidated_quote_field">
+				   <span id="quoted_amount_validate4" style="color:red;"></span>				
+					</td>
+				</tr>
+				<tr>
+				   <td colspan="1" ><span class="consolidated_division_field"> Division:</span></td><td colspan="1" >
+					   <select name="company_division" id="consol_company_division" class="consolidated_division_field">							        							
+							<!-- <option value="0"> Human Capital </option>	   
+							<option value="1"> Corporate Services </option>	 
+							<option value="2"> Group Comms  </option>	 
+							<option value="3"> BCM </option>	 
+							<option value="4"> D&TS </option>	 
+							<option value="5"> Ethics & Compliance  </option>	 
+							<option value="6"> Taxation </option>	 
+							<option value="7"> Legal </option>	 
+							<option value="8"> Construction Management </option>	 														
+							<option value="9"> Finance </option>
+							<option value="10"> Portfolio Strategy </option>
+							<option value="11"> Treasury Investor </option>
+							<option value="12"> Government Affairs </option>
+							<option value="13"> Emiratization</option>
+							<option value="14"> ERM </option>
+							<option value="15"> Responsible Investing </option>
+							<option value="16"> Group Strategy </option>
+							<option value="17"> UAE Investments </option>
+							<option value="18"> Internal Audit </option>
+							<option value="19"> Other </option> -->
+						 </select>					
+					</td>
+				</tr>
 			<tr>
 				<td colspan="2"><input type="checkbox" name="ccb_billable" id="ccb_billable" value="y">&nbsp;&nbsp;Billable</td> 
 			</tr>

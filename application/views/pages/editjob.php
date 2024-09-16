@@ -7,6 +7,7 @@
 <script type="text/javascript">
 $(document).ready(function(){
 $("input[name='date']").datepicker({dateFormat: "yy-mm-dd"});
+ 
 });
 
 function validate()
@@ -54,8 +55,9 @@ $jobname = $values["jobname"];
 $description = $values["description"];
 $projecttype=$values["projecttype"];
 $projecttypes = explode("/",$projecttype);
-
-
+$quote = $values["quoted_amount"];
+$division = $values['division'];
+//echo $quote.','.$division;
 $date = $values["date"];
 $approved =  $values["approved"];
 $invoiced =  $values["invoiced"];
@@ -103,6 +105,25 @@ $monthly_consol_jobno = $values["monthly_consol_jobno"];
 						<span id="projecttype_validate" style="color:red;"></span>
 			</td>	
 		</tr>
+		<?php if($clientid == 18) {?>
+		<tr>
+		<td colspan="1"><span class="quote_field show">Quote:</span></td><td colspan="1">
+				   <input type="number" id="quoted_amount" name="quoted_amount" min="1" max="100000" step="0.1" class="quote_field show" value="<?php echo $quote;?>">				
+					</td>
+		</tr>
+	
+		<tr>
+		<td colspan="1" ><span class="division_field show"> Division:</span></td><td colspan="1" >
+					   <select name="company_division" id="company_division" class="division_field show">	
+					   	
+					 <?php  foreach($clientdivisions as $key => $row):	?>	
+						<option value="<?php echo $row['id'];?>" <?php if(($row['id'] == $division)) echo "selected";?>> <?php echo $row['division'];?></option>	   					 
+					 <?php endforeach; ?>
+							
+						 </select>					
+					</td>
+		</tr>
+		<?php }?>
         <?php  if( (isset($ek) && $ek == "y") || (isset($retainer) && $retainer == "y") ) { // only for ek retainer jobs and other retainer jobs?>
          <tr>
         <td colspan="2"><input type="checkbox" name="retainerscope" id="retainerscope" value="y" <?php  if($retainerscope  == "y") echo "checked";?> >&nbsp;&nbsp;Scope of Work</td>
