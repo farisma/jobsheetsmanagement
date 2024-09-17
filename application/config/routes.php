@@ -137,7 +137,8 @@ $route['list_divisions'] = "clients/list_divisions";
 $route['edit-division/(:any)'] = "clients/edit_division";
 $route['delete-division/(:any)'] = "clients/delete_division";
 
-
+$route['findstatusreport'] = "clients/viewstatusreports";
+$route['exportmonthlyreportalljobs'] = "clients/exportmonthlyreportalljobs";
 $route['ajaxToGetDivisionsByClientID/(:any)'] = "clients/find_divisions_by_client";
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */

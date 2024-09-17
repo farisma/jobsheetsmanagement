@@ -925,6 +925,45 @@
 		}
 		
 
+		public function listAllJobsReport($jobsdetails) {
+			$clientid = $jobsdetails['clientid'];
+			$query = $this->db->query("SELECT t1.id,t1.description,t1.date,t1.job_no,t1.jobname,t1.quote,t1.division,t1.jobclosed,t1.retainer_c_job,t1.consolidatedB_c_job,t2.id,t2.division FROM jobs as t1,divisions as t2 WHERE t1.client_id = '".$clientid."' and t1.enabled='y' and (t1.jobclosed != 'y' and t1.invoiced != 'y') and t1.division = t2.id order by t1.division");    
+			if ($query->num_rows() > 0)
+			{
+				$i = 0;
+				$k=0;
+				foreach ($query->result() as $row)
+				{
+					if ($row->retainer_c_job == 'y' or $row->consolidatedB_c_job == 'y') {
+					//if its a consolidated or retainer job it should be grouped together
+					$result['retainerconsol'][$i]["id"] =  $row->id;
+					$result['retainerconsol'][$i]["date"] =  $row->date;
+					$result['retainerconsol'][$i]["jobno"] =  $row->job_no;					
+					$result['retainerconsol'][$i]["jobname"] =  $row->jobname;
+					$result['retainerconsol'][$i]["description"] =  $row->description;
+					$result['retainerconsol'][$i]["quote"] =  $row->quote;
+					$result['retainerconsol'][$i]["division"] =  $row->division;
+									
+					$i++;
+				   }
+				   else {
+					$result['nonretainer'][$k]["id"] =  $row->id;
+					$result['nonretainer'][$k]["date"] =  $row->date;
+					$result['nonretainer'][$k]["jobno"] =  $row->job_no;					
+					$result['nonretainer'][$k]["jobname"] =  $row->jobname;
+					$result['nonretainer'][$k]["description"] =  $row->description;
+					$result['nonretainer'][$k]["quote"] =  $row->quote;
+					$result['nonretainer'][$k]["division"] =  $row->division;
+						
+					$k++;
+				   }
+				}
+				
+				return $result;
+			}
+			return null;
+		}
+
 		public function add_division($division){
 			$data = array(
 				"division" => $division["division"],
@@ -1000,6 +1039,14 @@
 			   return $query->result_array();
 		}
 
+		public function getDivisionsPerClientforOpenJobs($clientdetails) {
+			$clientid = $clientdetails['clientid'];
+			$query = $this->db->query("SELECT division FROM jobs where client_id = '".$clientid."' and (jobclosed != 'y' and invoiced != 'y') and division != '' and enabled = 'y' group by division");
+			if ($query->num_rows() > 0) 
+			return $query->result_array();
+		}
+
+
 		public function getColorForDivision($divisionid) {
 			$query = $this->db->query("select color,textcolor from divisions where id='".$divisionid."'");
 			if ($query->num_rows() > 0) {
@@ -1048,4 +1095,37 @@
 		   }
 		  return null;
 	}	
+
+	public function getOpenJobsPerDivision($clientdetails,$division, $retainerorconsol) {
+		if($retainerorconsol == true) {
+			// if retainerorconsol is true, it should select either retainer jobs or consolidated jobs
+		  //$ret = 'y';
+		  $q = "and (retainer_c_job = 'y' or consolidatedB_c_job = 'y')";
+		} 
+		else {
+			//jobs apart from retainer or consolidated jobs
+		  $q = "and (retainer_c_job = 'n' and consolidatedB_c_job = 'n')";
+		}
+		$query = $this->db->query("SELECT t1.id,t1.description,t1.date,t1.job_no,t1.jobname,t1.quote,t1.division,t1.jobclosed,t1.retainer_c_job,t2.id,t2.division FROM jobs as t1,divisions as t2 WHERE t1.client_id = '".$clientdetails['clientid']."' and (t1.jobclosed !='y' and t1.invoiced !='y') and t1.enabled = 'y' and t1.division = t2.id and t1.division = '".$division."'".$q."");    
+			
+		if ($query->num_rows() > 0)
+		{
+			$i = 0;
+			foreach ($query->result() as $row) {
+			$result[$i]["id"] =  $row->id;
+			$result[$i]["date"] =  $row->date;
+			$result[$i]["jobno"] =  $row->job_no;					
+			$result[$i]["jobname"] =  $row->jobname;
+			$result[$i]["description"] =  $row->description;
+			$result[$i]["quote"] =  $row->quote;
+			$result[$i]["division"] =  $row->division;
+			$result[$i]["jobclosed"] =  $row->jobclosed;					
+			$i++;
+			}
+			return $result;
+	   }
+	  return null;
+}
+
 }	
+

@@ -1284,6 +1284,22 @@
 			
 		}
 
+		public function viewstatusreports() {
+			$client = $this->input->post('clientname');
+			if($client != null )			
+			{
+				$jobs = Array(
+					"clientid" => $client,					
+				);
+				$jobsfetched  =  $this->Clients_model->listAllJobsReport($jobs); 
+			    $data["alljobs"] = $jobsfetched;
+				$data['isadmin']  =  $this->ion_auth->is_admin();
+				$data['alljobsearchparams'] = $jobs;
+				$this->render_page('pages/view_reports',$data);
+			}  else {
+				$this->render_page('pages/view_reports');
+			  }
+		}
 		public function viewreports(){
 			
 			//$this->render_page('pages/view_reports');
@@ -1552,6 +1568,225 @@
 			//$this->render_page('pages/view_reports');
 		}
 		
+		public function exportmonthlyreportalljobs() {
+			$client = $this->input->post('hiddenclientname');
+			$clientdetail = Array(
+				"clientid" => $client,
+			);
+			$divisionsperclient  =  $this->Clients_model->getDivisionsPerClientforOpenJobs($clientdetail); 
+			if($client != null) {
+				$jobs = Array(
+					"clientid" => $client				
+				);
+			$jobsfetched  =  $this->Clients_model->listAllJobsReport($jobs); 
+				//load our new PHPExcel library
+			$this->load->library('excel');
+			//activate worksheet number 1
+			$this->excel->setActiveSheetIndex(0);
+			//name the worksheet
+			$this->excel->getActiveSheet()->setTitle('Timesheets ');
+			//set cell A1 content with some text
+			
+			
+			
+
+			//set aligment to center for that merged cell (A1 to D1)
+			$this->excel->getActiveSheet()->getStyle('A1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+			$this->excel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE)->setFitToWidth(1)->setFitToHeight(0);
+			$this->excel->getActiveSheet()->getHeaderFooter()->setOddHeader('&C&B&16' . 
+			$this->excel->getProperties()->getTitle())
+			->setOddFooter('&CPage &P of &N');
+			$col = 'A';
+			$rownum = 1;
+			$colnum = 1;
+			$this->excel->getActiveSheet()->setCellValueByColumnAndRow(0,1, "Status Report"); 
+			$this->excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(true);
+			
+			// $this->excel->getActiveSheet()
+            // ->getStyleByColumnAndRow(0, 1)
+            // ->getAlignment()
+            // ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+			$k=2; // rownumber for the second row
+			for($col = 'A'; $col !== 'I'; $col++) {
+				$this->excel->getActiveSheet()->getColumnDimension($col)    
+				->setAutoSize(true); //set the column width auto
+				$this->excel->getActiveSheet()->getStyle($col . $k)->getFont()->setBold(true); //set font style bold forthe first row (title)
+			}
+			
+			$i=1;
+			$rownum = 2; //row starts feom second coz the first reserved for the titles
+			
+			//setting the headers
+			$this->excel->getActiveSheet()->setCellValueByColumnAndRow(0,2,"Sl. No.");	
+			$this->excel->getActiveSheet()->setCellValueByColumnAndRow(1,2,"Division");	
+			$this->excel->getActiveSheet()->setCellValueByColumnAndRow(2,2,"Job");			
+			$this->excel->getActiveSheet()->setCellValueByColumnAndRow(3,2,"Job Name");			
+			$this->excel->getActiveSheet()->setCellValueByColumnAndRow(4,2,"Description");
+			$this->excel->getActiveSheet()->setCellValueByColumnAndRow(5,2,"Date");
+			$this->excel->getActiveSheet()->setCellValueByColumnAndRow(6,2,"Amount");
+			$this->excel->getActiveSheet()->setCellValueByColumnAndRow(7,2,"Status");
+			// $this->excel->getActiveSheet()->setCellValueByColumnAndRow(7,2,"Status");
+			// $this->excel->getActiveSheet()->setCellValueByColumnAndRow(7,2,"Total");
+
+			// set the data
+			$columnnum = 0;
+			$rownum = 3;
+			$this->excel->getActiveSheet()->setCellValueByColumnAndRow(0,$rownum,"Retainer Jobs"); 
+			$this->excel->getActiveSheet()->getStyle('A'.$rownum)->getFont()->setBold(true);
+			$rownum = $rownum + 1;
+			$i = 1;
+			$totalvalueofmonth = 0;
+			// for retainer jobs
+			if(isset($divisionsperclient)) {
+				if(!empty($divisionsperclient)) {
+				foreach($divisionsperclient as $key=>$value) {
+					    $currentdiv = $value['division'];
+						$currentdivcolor = $this->Clients_model->getColorForDivision($currentdiv);
+						
+					    $jobsperdivision = $this->Clients_model->getOpenJobsPerDivision($clientdetail,$currentdiv,true); //third paramaeter is for retainer
+						//print_r($jobsperdivision);
+						if(!empty($jobsperdivision)) {
+						$countofjobs = count($jobsperdivision);
+						$count = 1;
+						$totalvalueperdiv = 0;
+						foreach($jobsperdivision as $key1=>$value1) { 
+							// if($value1['jobclosed'] == 'y' ) $status = "Closed"; else $status = '';
+								$this->excel->getActiveSheet()->setCellValueByColumnAndRow(0,$rownum,$i);   
+								$this->excel->getActiveSheet()->setCellValueByColumnAndRow(1,$rownum,$value1['division']);
+								$this->excel->getActiveSheet()->setCellValueByColumnAndRow(2,$rownum,$value1['jobno']);					
+								$this->excel->getActiveSheet()->setCellValueByColumnAndRow(3,$rownum,$value1['jobname']);
+								$this->excel->getActiveSheet()->setCellValueByColumnAndRow(4,$rownum,$value1['description']);
+								$this->excel->getActiveSheet()->setCellValueByColumnAndRow(5,$rownum,date('d/M/Y',strtotime($value1['date'])));
+								$this->excel->getActiveSheet()->setCellValueByColumnAndRow(6,$rownum,$value1['quote']);
+								$this->excel->getActiveSheet()->setCellValueByColumnAndRow(7,$rownum,"WIP");
+								// $totalvalueperdiv = $totalvalueperdiv + $value1['quote'];
+								// $totalvalueofmonth = $totalvalueofmonth + $value1['quote'];
+								
+								for($col = 'A'; $col !== 'I'; $col++) {
+									$this->excel->getActiveSheet()->getStyle($col.$rownum)->applyFromArray(
+										array(
+											'fill' => array(
+												'type' => PHPExcel_Style_Fill::FILL_SOLID,
+												'color' => array('rgb' => $currentdivcolor['color']) 
+											),
+											'font' => array(
+												'color' => array('rgb' => $currentdivcolor['textcolor']),
+											)
+										)
+									);
+								}
+
+								$columnnum++;$rownum++;$i++;
+								$count++;
+						}
+						
+					}														
+					
+				}
+			}
+			} 
+					$rownum = $rownum + 2;
+					$this->excel->getActiveSheet()->getStyle('A' . $rownum)->getFont()->setBold(true);
+					$this->excel->getActiveSheet()->setCellValueByColumnAndRow(0,$rownum,"Non retainer Billing"); 
+					$rownum = $rownum + 1;
+					$j = 1;
+
+			// for non retainer jobs
+  
+			if(isset($divisionsperclient)) {  
+				$k = 1;
+				if(!empty($divisionsperclient)) {
+					foreach($divisionsperclient as $key=>$value) {
+							$currentdiv = $value['division'];
+							$currentdivcolor = $this->Clients_model->getColorForDivision($currentdiv);
+							$jobsperdivisionnonretainer = $this->Clients_model->getOpenJobsPerDivision($clientdetail,$currentdiv,false); //third paramaeter is for retainer
+							//print_r($jobsperdivision);
+							if(!empty($jobsperdivisionnonretainer)) {
+								$countofjobs_nr = count($jobsperdivisionnonretainer);
+								$count_nr = 1;
+								$totalvalueperdiv_nr = 0;
+							foreach($jobsperdivisionnonretainer as $key1=>$value1) { 
+								// if($value1['jobclosed'] == 'y' ) $status = "Closed"; else $status = '';
+									$this->excel->getActiveSheet()->setCellValueByColumnAndRow(0,$rownum,$k);   
+									$this->excel->getActiveSheet()->setCellValueByColumnAndRow(1,$rownum,$value1['division']);
+									$this->excel->getActiveSheet()->setCellValueByColumnAndRow(2,$rownum,$value1['jobno']);					
+									$this->excel->getActiveSheet()->setCellValueByColumnAndRow(3,$rownum,$value1['jobname']);
+									$this->excel->getActiveSheet()->setCellValueByColumnAndRow(4,$rownum,$value1['description']);
+									$this->excel->getActiveSheet()->setCellValueByColumnAndRow(5,$rownum,date('d/M/Y',strtotime($value1['date'])));
+									$this->excel->getActiveSheet()->setCellValueByColumnAndRow(6,$rownum,$value1['quote']);
+									$this->excel->getActiveSheet()->setCellValueByColumnAndRow(7,$rownum,"WIP");
+									
+								   
+									for($col = 'A'; $col !== 'I'; $col++) {
+										$this->excel->getActiveSheet()->getStyle($col.$rownum)->applyFromArray(
+											array(
+												'fill' => array(
+													'type' => PHPExcel_Style_Fill::FILL_SOLID,
+													'color' => array('rgb' => $currentdivcolor['color']) 
+												),
+												'font' => array(
+												     'color' => array('rgb' => $currentdivcolor['textcolor']),
+												)
+											)
+										);
+									}
+									$columnnum++;$rownum++;$k++;
+									$count_nr++;
+							}
+							
+						}
+					}
+				}
+
+			}
+			// $this->excel->getActiveSheet()->setCellValueByColumnAndRow(6,$rownum,"Total amount");
+			// $this->excel->getActiveSheet()->setCellValueByColumnAndRow(7,$rownum,$totalvalueofmonth);
+			$this->excel->getActiveSheet()->getStyle('G' . $rownum)->getFont()->setBold(true);
+			$this->excel->getActiveSheet()->getStyle('H' . $rownum)->getFont()->setBold(true);	 
+            $rownum = $rownum+4;
+			$divisionlegend = $this->Clients_model->getAllDivisionsandColors();
+			//print_r($divisionlegend);
+			$legendcount = 0;
+			for($i=0;$i<5;$i++) {
+				for($col = 1; $col <= 8; $col+=2) {					
+						if(isset($divisionlegend[$legendcount]['division']))	
+						$this->excel->getActiveSheet()->setCellValueByColumnAndRow($col,$rownum,$divisionlegend[$legendcount]['division']);
+						
+						if($col == 1) $newcol = "A";
+						else if($col == 3) $newcol = "C";
+						else if($col == 5) $newcol = "E";
+						else if($col == 7) $newcol = "G";
+						
+						if(isset($divisionlegend[$legendcount]['division']))	{						
+							$this->excel->getActiveSheet()->getStyle($newcol.$rownum)->applyFromArray(
+											array(
+												'fill' => array(
+													'type' => PHPExcel_Style_Fill::FILL_SOLID,
+													'color' => array('rgb' => $divisionlegend[$legendcount]['color']) 
+												),
+												
+											)
+										);
+						}
+						$legendcount++;
+				}
+				
+				$rownum++;
+			}
+			
+			$filename='openjobspermonth.xls'; //save our workbook as this file name
+			header('Content-Type: application/vnd.ms-excel'); //mime type
+			header('Content-Disposition: attachment;filename="'.$filename.'"'); //tell browser what's the file name
+			header('Cache-Control: max-age=0'); //no cache
+			
+			//save it to Excel5 format (excel 2003 .XLS file), change this to 'Excel2007' (and adjust the filename extension, also the header mime type)
+			//if you want to save it as .XLSX Excel 2007 format
+			$objWriter = PHPExcel_IOFactory::createWriter($this->excel, 'Excel2007');  
+			//force user to download the Excel file without writing it to server's HD
+			$objWriter->save('php://output');
+
+			}
+		}
 		public function add_division(){
 
 			$clients = $this->Clients_model->getClients();
