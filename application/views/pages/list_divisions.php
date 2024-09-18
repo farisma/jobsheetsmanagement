@@ -9,13 +9,13 @@
 <?php 
 $i = 1;
 if(isset($divisions)) {
-foreach($divisions as $row)
-{ 
-    $divisionid = $row["id"];
-?><tr><td colspan="1"><?php echo $i;?></td><td colspan="1"><?php echo $row["clientname"];?></td><td colspan="1"><?php echo $row["division"];?></td><td><a href="<?php echo site_url('edit-division/'. $divisionid); ?>">Edit</a>/<a href="<?php echo site_url('delete-division/'. $divisionid); ?>">Delete</a></td></tr>
-<?php 
-$i++;
-}
+    foreach($divisions as $row)
+    { 
+        $divisionid = $row["id"];
+        ?><tr><td colspan="1"><?php echo $i;?></td><td colspan="1"><?php echo $row["clientname"];?></td><td colspan="1"><?php echo $row["division"];?></td><td><a href="<?php echo site_url('edit-division/'. $divisionid); ?>">Edit</a>/<a href="<?php echo site_url('delete-division/'. $divisionid); ?>">Delete</a></td></tr>
+        <?php 
+        $i++;
+    }
 }
 ?>
 

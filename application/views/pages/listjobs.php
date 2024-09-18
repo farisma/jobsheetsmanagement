@@ -9,12 +9,10 @@
   $(document).ready(function(){
   $("input[name='date']").datepicker({dateFormat: "yy-mm-dd"});
    $("#listjobs").freezeHeader();
-
   });
 function disableJobById(value)
   {
-	  var jobnoId = value;
-	   
+	  var jobnoId = value;	   
 	   var msg;
 	   jQuery.ajax({
 		type: "GET",
@@ -145,8 +143,22 @@ echo "<option value=".$key.">".$rows."</option>";
 </tr>
 </table>
 <table class="listjobs" id="listjobs">
- <thead><tr style="background:#dddddd;"><th width="50">&nbsp;</th><th width="50" class="smallfont">Retainer</th><th width="50" class="smallfont">Billable</th><th width="50" class="smallfont">Approved</th><th width="50" class="smallfont">Invoiced</th><th width="50" class="smallfont">Consolidated billing</th><th width="70">Date</th><th width="70">Type</th><th width="80">Job No.</th><th width="150">Job Name</th><th width="250">Description</th><th width="80">Client</th><?php if($admin) {?><th width="100">Action</th><?php }?></tr>
-</thead>
+	<thead>
+		<tr style="background:#dddddd;">
+			<th width="50">&nbsp;</th>
+			<th width="50" class="smallfont">Retainer</th>
+			<th width="50" class="smallfont">Billable</th>
+			<th width="50" class="smallfont">Approved</th>
+			<th width="50" class="smallfont">Invoiced</th>
+			<th width="50" class="smallfont">Consolidated billing</th>
+			<th width="70">Date</th>
+			<th width="70">Type</th>
+			<th width="80">Job No.</th>
+			<th width="150">Job Name</th>
+			<th width="250">Description</th>
+			<th width="80">Client</th><?php if($admin) {?><th width="100">Action</th><?php }?>
+		</tr>
+	</thead>
  <?php
 
 $i = 1;
@@ -177,22 +189,22 @@ if(isset($jobs)) {foreach($jobs as $key => $rows)
   $consolidate_jobno = $jobs[$key]["consolidated_jobno"];
     ?>
      <tbody>
-<tr id="jobno<?php echo $jobs[$key]["id"]; ?>">
-<td><?php echo $i;?></td>
-<td><?php echo $retainer_icon;?></td>
-<td><?php echo $billable_icon;?></td>
-<td><?php echo $approved_icon;?></td>
-<td><?php  echo $invoiced_icon; ?></td>
-<td><?php  echo $under750_icon; ?>
-<?php //echo $consolidate_jobno;?></td>
-<td><?php  echo $dateadded; ?></td>
-<td><?php echo $jobs[$key]["project_type"];?></td>
-<td><?php  echo $jobs[$key]["jobno"]; ?></td>
-<td><?php  echo $jobs[$key]["jobname"]; ?></td>
-<td><?php  echo $jobs[$key]["description"]; ?></td>
-<td><?php echo $jobs[$key]["clientname"];?></td>
-<?php if($admin) {?><td><a href="<?php echo site_url('edit-job/'.$jobs[$key]["id"]) ?>">Edit</a>&nbsp;&nbsp;<a onClick="disableJobById(<?php echo $jobs[$key]["id"];?>)" href="<?php echo "#"; ?>">Disable</a>&nbsp;&nbsp;<?php  if($user == "admin"  || $user == "brandon") {?><a onClick="deleteJobById(<?php echo $jobs[$key]["id"];?>)" href="<?php echo "#"; ?>">Delete</a><?php  } ?></td><?php } ?>
-</tr>
+		<tr id="jobno<?php echo $jobs[$key]["id"]; ?>">
+			<td><?php echo $i;?></td>
+			<td><?php echo $retainer_icon;?></td>
+			<td><?php echo $billable_icon;?></td>
+			<td><?php echo $approved_icon;?></td>
+			<td><?php  echo $invoiced_icon; ?></td>
+			<td><?php  echo $under750_icon; ?>
+			<?php //echo $consolidate_jobno;?></td>
+			<td><?php  echo $dateadded; ?></td>
+			<td><?php echo $jobs[$key]["project_type"];?></td>
+			<td><?php  echo $jobs[$key]["jobno"]; ?></td>
+			<td><?php  echo $jobs[$key]["jobname"]; ?></td>
+			<td><?php  echo $jobs[$key]["description"]; ?></td>
+			<td><?php echo $jobs[$key]["clientname"];?></td>
+			<?php if($admin) {?><td><a href="<?php echo site_url('edit-job/'.$jobs[$key]["id"]) ?>">Edit</a>&nbsp;&nbsp;<a onClick="disableJobById(<?php echo $jobs[$key]["id"];?>)" href="<?php echo "#"; ?>">Disable</a>&nbsp;&nbsp;<?php  if($user == "admin"  || $user == "brandon") {?><a onClick="deleteJobById(<?php echo $jobs[$key]["id"];?>)" href="<?php echo "#"; ?>">Delete</a><?php  } ?></td><?php } ?>
+	    </tr>
 </tbody>
 <?php 
   $i++;
@@ -225,7 +237,7 @@ foreach($queryitems as $key=>$value) {
 	
 		}
 ?>
-<input type="hidden" name="hiddenclient" value="<?php  if(isset($client)) echo $client; else echo 0;?>">
+	   <input type="hidden" name="hiddenclient" value="<?php  if(isset($client)) echo $client; else echo 0;?>">
 	   <input type="hidden" name="hiddendate" value="<?php  if(isset($date)) echo  $date;?>">
 	   <input type="hidden" name="hiddenekbillable" value="<?php  if(isset($ekbillable))  echo $ekbillable;?>">
 	   <input type="hidden" name="hiddeninvoiced" value="<?php  if(isset($invoiced))  echo $invoiced;?>">

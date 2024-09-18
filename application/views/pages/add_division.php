@@ -1,23 +1,17 @@
 <script type="text/javascript">
 function validate()
 {
-var divisionname;
-divisionname = document.getElementById("divisionname").value;
-client = document.getElementById("client").value;
+    var divisionname;
+    divisionname = document.getElementById("divisionname").value;
+    client = document.getElementById("client").value;
 
     if(divisionname == "")
-      {
-        
-          document.getElementById("division_validate").innerHTML = "Please fill in the division field"; 
-        
-       
+      {        
+          document.getElementById("division_validate").innerHTML = "Please fill in the division field";                
       }
       else if(client == "")
-      {
-        
-          document.getElementById("client_validate").innerHTML = "Please select the client"; 
-        
-       
+      {        
+          document.getElementById("client_validate").innerHTML = "Please select the client";                
       }
       else {
          document.getElementById("form1").submit(); 
@@ -36,11 +30,10 @@ client = document.getElementById("client").value;
            <td>
            <select name="client" id="client" onChange="">
            <?php $i=0;
-								foreach($clients as $key => $row):
-							?>
-							<option value="<?php echo $key;?>"> <?php echo $row;?></option>	   
-							<?php 
-							endforeach;  ?>	
+				foreach($clients as $key => $row):
+				?>
+					<option value="<?php echo $key;?>"> <?php echo $row;?></option>	   
+				<?php endforeach;  ?>					
             </select>
             <span id="client_validate" style="color:red;"></span>
            </td>
@@ -57,12 +50,9 @@ client = document.getElementById("client").value;
         <tr>
             <td>Text Color</td>
             <td><input name="divisiontextcolor" class="divisiontextcolor" id="divisiontextcolor" /><span id="divisiontextcolor_validate" style="color:red;"></span></td>
-        </tr>
-    
-    
+        </tr>        
          <tr>
-        <td><input class="btn" type="button" value="Add" onclick="Javascript: return validate()"></td>
-         
+            <td><input class="btn" type="button" value="Add" onclick="Javascript: return validate()"></td>         
         </tr>
 	 </table>
 	</form>

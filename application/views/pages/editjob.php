@@ -6,68 +6,66 @@
  <script src="//code.jquery.com/ui/1.13.3/jquery-ui.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
-$("input[name='date']").datepicker({dateFormat: "yy-mm-dd"});
- 
+$("input[name='date']").datepicker({dateFormat: "yy-mm-dd"}); 
 });
 
 function validate()
 {
-var jobname,projecttype;
-jobname = document.getElementById("jobname").value;
-projecttype = document.getElementById("project_type").value;
-  if(jobname == "")
-    {
-       document.getElementById("jobname_validate").innerHTML = "Please fill in the job name field";
-    }
+	var jobname,projecttype;
+	jobname = document.getElementById("jobname").value;
+	projecttype = document.getElementById("project_type").value;
+	if(jobname == "")
+		{
+		document.getElementById("jobname_validate").innerHTML = "Please fill in the job name field";
+		}
 	else if(projecttype == "")
-	{
-        document.getElementById("projecttype_validate").innerHTML = "Please select any project type";
-	}
-    else
-    {
-    document.getElementById("form1").submit(); 
-    }
+		{
+			document.getElementById("projecttype_validate").innerHTML = "Please select any project type";
+		}
+	else
+		{
+		document.getElementById("form1").submit(); 
+		}
 }
 </script>
 <?php  foreach($jobDetails as $key=>$values){
-$id = $values["id"];
-$job_no =  $values["job_no"];
-//$mubadalajobno = substr($job_no,0,4);
-$first_jobno = substr($job_no,0,4);
-if($first_jobno == "EKSC") { 
-$ek = 'y';
-//To find consolidated jobno in case of jobs under 750
-$jobnoWithoutIndex = substr($job_no,0,10);
-$consolidateJobNo = $jobnoWithoutIndex."01";
-} 
-else if($first_jobno == 2336 || $first_jobno == 2353 || $first_jobno == 2401){
-	// job no thats meant to be retainer with first job has to be consolidated job no. on local its 2218 for Mubadala. server 2336
- 	$retainerconsolidated = "y";
-	$jobnoWithoutIndex = substr($job_no,0,8);
-    $consolidateJobNo = $jobnoWithoutIndex."01";
-}
-$retainerjob  = $values["retainer_c_job"];
-if($retainerjob == "y")
-    $retainer = "y";
-$clientname  = $values["clientname"];
-$clientid  = $values["clientid"];
-$jobname = $values["jobname"];
-$description = $values["description"];
-$projecttype=$values["projecttype"];
-$projecttypes = explode("/",$projecttype);
-$quote = $values["quoted_amount"];
-$division = $values['division'];
-//echo $quote.','.$division;
-$date = $values["date"];
-$approved =  $values["approved"];
-$invoiced =  $values["invoiced"];
-$ekbillable =  $values["ekbillable"];
-$jobclosed =  $values["jobclosed"];
-$retainerscope = $values["retainerscope"];
-$consolidated_check = $values["consolidated_check"];
-$consolidatedB_c_job = $values["consolidatedB_c_job"];
-$monthly_consol_jobno = $values["monthly_consol_jobno"];
-}?>
+			$id = $values["id"];
+			$job_no =  $values["job_no"];
+			//$mubadalajobno = substr($job_no,0,4);
+			$first_jobno = substr($job_no,0,4);
+			if($first_jobno == "EKSC") { 
+			$ek = 'y';
+			//To find consolidated jobno in case of jobs under 750
+			$jobnoWithoutIndex = substr($job_no,0,10);
+			$consolidateJobNo = $jobnoWithoutIndex."01";
+			} 
+			else if($first_jobno == 2336 || $first_jobno == 2353 || $first_jobno == 2401){
+				// job no thats meant to be retainer with first job has to be consolidated job no. on local its 2218 for Mubadala. server 2336
+				$retainerconsolidated = "y";
+				$jobnoWithoutIndex = substr($job_no,0,8);
+				$consolidateJobNo = $jobnoWithoutIndex."01";
+			}
+			$retainerjob  = $values["retainer_c_job"];
+			if($retainerjob == "y")
+				$retainer = "y";
+			$clientname  = $values["clientname"];
+			$clientid  = $values["clientid"];
+			$jobname = $values["jobname"];
+			$description = $values["description"];
+			$projecttype=$values["projecttype"];
+			$projecttypes = explode("/",$projecttype);
+			$quote = $values["quoted_amount"];
+			$division = $values['division'];			
+			$date = $values["date"];
+			$approved =  $values["approved"];
+			$invoiced =  $values["invoiced"];
+			$ekbillable =  $values["ekbillable"];
+			$jobclosed =  $values["jobclosed"];
+			$retainerscope = $values["retainerscope"];
+			$consolidated_check = $values["consolidated_check"];
+			$consolidatedB_c_job = $values["consolidatedB_c_job"];
+			$monthly_consol_jobno = $values["monthly_consol_jobno"];
+      }?>
 <?php if(isset($message)) {?><div class="alert"> <?php echo $message;?></div><?php }?>
 <?php $this->load->view("pages/adminmenu")?>
 <div class="hero-unit">

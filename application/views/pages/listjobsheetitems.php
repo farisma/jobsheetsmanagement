@@ -9,30 +9,30 @@ Called on onchange event of clients drop down list
 function getJobcodes(value,name) {
          var clientid = value;
          var cnt = 0;
-		  jQuery.ajax({
-		type: "POST",
-		url: "<?php echo base_url(); ?>" + "index.php/ajaxToGetJobcodes/"+name,
-		data: $('#listjobsheetsform').serialize(),
-		dataType: "json",
-		success: function(res) {
-		if (res)
-		{
-		         var jobCodeSelector = $("select[name='"+name+"']").parent().closest('td').next('td').find('select');  /* find the select field from next td which contains the dropdown list for job codes*/
-                  jobCodeSelector.empty();
-				 console.log(res.length);
-				  jQuery.each(res, function( key, value ) {
-				  jobCodeSelector.prepend($("<option></option>").attr("value",key).text(value)); /* Append values from the controller to the select dropdown list*/
-				  cnt++;
-				});
-		jobCodeSelector.prepend("<option value='' selected='selected'>Choose Job No.</option>");
-		//this is to decrease the height of a select dropdown if there are lot of job numbers for a client
-		
-		}
-		else 
-		{
-		          var jobCodeSelector = $("select[name='"+name+"']").parent().closest('td').next('td').find('select');  
-                  jobCodeSelector.empty();
-		}
+		     jQuery.ajax({
+          type: "POST",
+          url: "<?php echo base_url(); ?>" + "index.php/ajaxToGetJobcodes/"+name,
+          data: $('#listjobsheetsform').serialize(),
+          dataType: "json",
+          success: function(res) {
+          if (res)
+          {
+              var jobCodeSelector = $("select[name='"+name+"']").parent().closest('td').next('td').find('select');  /* find the select field from next td which contains the dropdown list for job codes*/
+              jobCodeSelector.empty();
+              console.log(res.length);
+              jQuery.each(res, function( key, value ) {
+                jobCodeSelector.prepend($("<option></option>").attr("value",key).text(value)); /* Append values from the controller to the select dropdown list*/
+                cnt++;
+              });
+              jobCodeSelector.prepend("<option value='' selected='selected'>Choose Job No.</option>");
+          //this is to decrease the height of a select dropdown if there are lot of job numbers for a client
+          
+          }
+          else 
+          {
+              var jobCodeSelector = $("select[name='"+name+"']").parent().closest('td').next('td').find('select');  
+              jobCodeSelector.empty();
+          }
 		}
 		});
  }
@@ -55,28 +55,22 @@ Called on clicking submit button
 		var i=1;
 		var totalhrs=0;
 		var error = 0;/* Flag to indicate error */
-		       jQuery.each(res, function( key, value ) {
+		jQuery.each(res, function( key, value ) {
 				 if(key == "error") { 
-                 error = 1; 
-                 
-                 $("#alert").html(value).addClass("alert");
-                 
-                 }
-				 
-				 else {
-                   /*var d = value.date;
-                   var myDate = new Date();
-                 var d2 = myDate.format("M jS, Y");
-                 alert(d2) */
-                 var dateadded = new Date(value.date);
-                   var dateadded_formatted = dateadded.format("DD/MMM/YYYY");
-				   $('table tr.'+day).remove();/* Every tr for particular day is given class name as day name. Remove all row with that class in order to add all the data again with the data from json response.*/
-				   $('table tr.totalhrs').remove(); /* To remove previously added total hrs row. otherwise the old total hours will stay there as the page is not reloading becoz ajax is used for adding rows. */
-                   /* As each time class is removed in the loop(above code), in the below code class is given a temporary name which will be exchanged later after the loop */
-				   var newrows = '<tr class="'+day+'temp"><td colspan="1">'+i+'</td><td colspan="1">'+value.clientname+'</td><td colspan="1">'+value.job_no+'</td><td colspan="1">'+dateadded_formatted+'</td><td colspan="1">'+value.hoursspent+'</td><td colspan="1">'+value.description+'</td><td> <a onclick="deletejobsheet('+value.id+')">Delete</a></td></tr>';
-				   $('input[name="'+day+'"]').parents('tr').before(newrows);/* Add new rows of data before the row that contains the button to add and submit*/
-			       i = Number(i) + Number(1);
-				   totalhrs = Number(totalhrs) + Number(value.hoursspent); /* Calculating total hours of job done in a day */
+                 error = 1;                  
+                 $("#alert").html(value).addClass("alert");                 
+          }				 
+				  else {
+                  
+                var dateadded = new Date(value.date);
+                var dateadded_formatted = dateadded.format("DD/MMM/YYYY");
+                $('table tr.'+day).remove();/* Every tr for particular day is given class name as day name. Remove all row with that class in order to add all the data again with the data from json response.*/
+                $('table tr.totalhrs').remove(); /* To remove previously added total hrs row. otherwise the old total hours will stay there as the page is not reloading becoz ajax is used for adding rows. */
+                /* As each time class is removed in the loop(above code), in the below code class is given a temporary name which will be exchanged later after the loop */
+                var newrows = '<tr class="'+day+'temp"><td colspan="1">'+i+'</td><td colspan="1">'+value.clientname+'</td><td colspan="1">'+value.job_no+'</td><td colspan="1">'+dateadded_formatted+'</td><td colspan="1">'+value.hoursspent+'</td><td colspan="1">'+value.description+'</td><td> <a onclick="deletejobsheet('+value.id+')">Delete</a></td></tr>';
+                $('input[name="'+day+'"]').parents('tr').before(newrows);/* Add new rows of data before the row that contains the button to add and submit*/
+                i = Number(i) + Number(1);
+                totalhrs = Number(totalhrs) + Number(value.hoursspent); /* Calculating total hours of job done in a day */
 				   }
 				});
 				/* If no error and row successfully added */
@@ -114,7 +108,13 @@ Called on clicking submit button
 <th colspan="7"><h4>Timesheets for week <?php $year = date('Y'); $weekno = date('W',strtotime($datesunday));  echo " ".$weekno.", ".$year; ?><h4></th>
 </tr>
 <tr>
-<th>Sl no.</th><th colspan="1">Company</th><th colspan="1">Job No.</th><th colspan="1">Date</th><th colspan="1">Hours</th><th colspan="1">Job description</th><th colspan="1">Action</th>
+    <th>Sl no.</th>
+    <th colspan="1">Company</th>
+    <th colspan="1">Job No.</th>
+    <th colspan="1">Date</th>
+    <th colspan="1">Hours</th>
+    <th colspan="1">Job description</th>
+    <th colspan="1">Action</th>
 </tr>
 <?php 
 /*  Change format to display in views */

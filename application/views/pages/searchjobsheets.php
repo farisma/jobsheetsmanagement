@@ -11,8 +11,6 @@
   $(document).ready(function(){
       $("input[name='datestart']").datepicker({dateFormat: "yy-mm-dd"});
 	  $("input[name='dateend']").datepicker({dateFormat: "yy-mm-dd"});
-	  //$("select[name='client']").append("<option value='0'>No selection</option>");
-	  
 	  $("select[name='userid']").append("<option value='0' selected='selected'>No user</option>");
 	  $("select[name='client']").prepend("<option value='0' selected='selected'>Choose Client</option>");
 	  $("select[name='jobno']").prepend("<option value='0' selected='selected'>Choose Job no.</option>");
@@ -23,28 +21,27 @@
 function getJobcodes(value,name) {
          var clientid = value;
 		  jQuery.ajax({
-		type: "POST",
-		url: "<?php echo base_url(); ?>" + "index.php/ajaxToGetAllJobcodes/"+name,
-		data: $('#searchjobsheetform').serialize(),
-		dataType: "json",
-		success: function(res) {
-		if (res)
-		{
-			
-		         var jobCodeSelector = $("select[name='"+name+"']").parent().closest('td').next('td').find('select');  
-                  jobCodeSelector.empty();
-				  jQuery.each(res, function( index, item ) {
-					
-				  jobCodeSelector.append($("<option></option>").attr("value",item.id).text(item.job_no+' ('+item.jobname+')'));
-				});
-		jobCodeSelector.prepend("<option value='' selected='selected'>Choose Job no.</option>");
-		}
-		else 
-		{
+			type: "POST",
+			url: "<?php echo base_url(); ?>" + "index.php/ajaxToGetAllJobcodes/"+name,
+			data: $('#searchjobsheetform').serialize(),
+			dataType: "json",
+			success: function(res) {
+			if (res)
+			{				
+					var jobCodeSelector = $("select[name='"+name+"']").parent().closest('td').next('td').find('select');  
+					jobCodeSelector.empty();
+					jQuery.each(res, function( index, item ) {
+						
+					jobCodeSelector.append($("<option></option>").attr("value",item.id).text(item.job_no+' ('+item.jobname+')'));
+					});
+			        jobCodeSelector.prepend("<option value='' selected='selected'>Choose Job no.</option>");
+			}
+			else 
+			{
 
-		          var jobCodeSelector = $("select[name='"+name+"']").parent().closest('td').next('td').find('select');  
-                  jobCodeSelector.empty();
-		}
+					var jobCodeSelector = $("select[name='"+name+"']").parent().closest('td').next('td').find('select');  
+					jobCodeSelector.empty();
+			}
 		},
 		error: function(jqXHR, status, errorThrown) {
 			console.log("HTTP Status Code: " + jqXHR.status);
@@ -62,11 +59,11 @@ function getJobcodes(value,name) {
          <tr>
 		  <td>
 		    Choose client<?php   $js = 'onchange="getJobcodes(this.value,this.name);"';  
-			               echo form_dropdown('client', $clients,0,$js); ?>
+			      echo form_dropdown('client', $clients,0,$js); ?>
 			<?php echo form_error('client'); ?>   
 			</td>
 		   <td>
-			Jobcode<?php echo  form_dropdown('jobno'); ?>
+			Jobcode<?php echo form_dropdown('jobno'); ?>
 			<?php echo form_error('jobno'); ?>   
 			</td>
 		  </tr> 
@@ -85,16 +82,10 @@ function getJobcodes(value,name) {
 		   User  <?php echo form_dropdown('userid',$users,0); ?>
 			<?php echo form_error('userid'); ?> 
 		   </td>
-		   </tr>
-		   
-		   
-		</tr>
-		 
-		  
-  
-		<tr>
-		<td colspan="2"><input type="submit" id="submitsearch" name="submitsearch" value="Search" class="btn" ></td>
-		</tr>
+		   </tr>		   		   				 		
+			<tr>
+			<td colspan="2"><input type="submit" id="submitsearch" name="submitsearch" value="Search" class="btn" ></td>
+			</tr>
 	 </table>
 	</form>
 	
@@ -139,14 +130,28 @@ function getJobcodes(value,name) {
 	<table class="searchresultslist">
 	 <tr><th colspan="6">Search results...</th></tr>
 	    <tr>
-<th>Sl no.</th><th colspan="1">Company</th><th colspan="1">Job code</th><th colspan="1">Date</th><th colspan="1">Hours</th><th colspan="1">Job description</th><th>User</th>
-</tr>
-<?php $i=1;
+			<th>Sl no.</th>
+			<th colspan="1">Company</th>
+			<th colspan="1">Job code</th>
+			<th colspan="1">Date</th>
+			<th colspan="1">Hours</th>
+			<th colspan="1">Job description</th>
+			<th>User</th>
+		</tr>
+		<?php $i=1;
 foreach($searchresults as $row) {
 ?>
-<tr><td colspan="1"><?php echo $i;?></td><td colspan="1"><?php echo $row["clientname"];?></td><td colspan="1"><?php echo $row["job_no"];?></td><td colspan="1"><?php  $dateadded = $row["date"]; echo date('d/M/Y',strtotime($dateadded));?></td><td colspan="1"><?php echo $row["hoursspent"];?></td><td colspan="1"><?php echo $row["description"];?></td><td><?php echo $row["username"];?></td></tr>
-<?php  $i++;}?>
-<?php if(isset($isadmin) && $isadmin === true) {?><tr> <td colspan="7"><input type="submit" name="exportexcel" class="btn" value="Export as Excel"></td></tr><?php } ?>
+		<tr>
+			<td colspan="1"><?php echo $i;?></td>
+			<td colspan="1"><?php echo $row["clientname"];?></td>
+			<td colspan="1"><?php echo $row["job_no"];?></td>
+			<td colspan="1"><?php  $dateadded = $row["date"]; echo date('d/M/Y',strtotime($dateadded));?></td>
+			<td colspan="1"><?php echo $row["hoursspent"];?></td>
+			<td colspan="1"><?php echo $row["description"];?></td>
+			<td><?php echo $row["username"];?></td>
+		</tr>
+			<?php  $i++;}?>
+			<?php if(isset($isadmin) && $isadmin === true) {?><tr> <td colspan="7"><input type="submit" name="exportexcel" class="btn" value="Export as Excel"></td></tr><?php } ?>
 	</table>
 
 	<?php }

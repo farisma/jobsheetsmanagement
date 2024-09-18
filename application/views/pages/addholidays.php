@@ -5,34 +5,29 @@
    <script src="//code.jquery.com/ui/1.13.3/jquery-ui.min.js"></script>
   <script>
   $(document).ready(function(){
-      $("input[name='holidaydate']").datepicker({dateFormat: "yy-mm-dd"});
-	 
-	  
+      $("input[name='holidaydate']").datepicker({dateFormat: "yy-mm-dd"});	 	  
 	  });
 
   </script>
 <script type="text/javascript">
 function validate()
 {
-var hd,holidayname;
+    var hd,holidayname;
+    hd =  document.getElementById("holidaydate").value;
+    holidayname =  document.getElementById("holidayname").value;
 
-hd =  document.getElementById("holidaydate").value;
-holidayname =  document.getElementById("holidayname").value;
-
-    if(hd == "" || holidayname == "")
-      {
-               
-		if(holidayname == "") {
-          document.getElementById("hdname_validate").innerHTML = "Please fill in the holiday name "; 
-        }
-		else if(hd == "") {
-          document.getElementById("hd_validate").innerHTML = "Please fill in the holiday date field "; 
-        }
-		
-      }
-      else {
-         document.getElementById("form1").submit(); 
-      }
+        if(hd == "" || holidayname == "")
+          {                  
+             if(holidayname == "") {
+              document.getElementById("hdname_validate").innerHTML = "Please fill in the holiday name "; 
+            }
+            else if(hd == "") {
+              document.getElementById("hd_validate").innerHTML = "Please fill in the holiday date field "; 
+            }        
+          }
+          else {
+            document.getElementById("form1").submit(); 
+          }
 }
 </script>
 <?php if(isset($message)) {
@@ -60,9 +55,6 @@ holidayname =  document.getElementById("holidayname").value;
           <input type="text" name="holidaydate" id="holidaydate"  style="text-transform:uppercase;" value=""><span id="hd_validate" style="color:red;"></span>
          </td>
         </tr>
-		 
-		 
-		
          <tr>
         <td><input class="btn" type="button" value="Add" onclick="Javascript: return validate()"></td>
          

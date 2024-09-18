@@ -7,46 +7,42 @@
   <script>
   $(document).ready(function(){
       $("input[name='startdate']").datepicker({dateFormat: "yy-mm-dd"});
-	  $("input[name='enddate']").datepicker({dateFormat: "yy-mm-dd"});
-	  
+	  $("input[name='enddate']").datepicker({dateFormat: "yy-mm-dd"});	  
 	  });
 
   </script>
 <script type="text/javascript">
 function validate()
 {
-var emp,sd,ed,nod;
-
-sd =  document.getElementById("startdate").value;
-ed =  document.getElementById("enddate").value;
-nod = document.getElementById("noofdays").value;
-    if(emp == "" || sd == "" || ed == "" || nod == "")
-      {
-        if(emp == "") {
-          document.getElementById("employeename_validate").innerHTML = "Please fill in the employee name field"; 
-        }
-        else if(sd == "") {
-          document.getElementById("sd_validate").innerHTML = "Please fill in the start date field"; 
-        }
-		else if(ed == "") {
-          document.getElementById("ed_validate").innerHTML = "Please fill in the end date field"; 
-        }
-		else if(nod == "") {
-          document.getElementById("nod_validate").innerHTML = "Please fill in the no. of days field"; 
-        }
-      }
-      else {
-         document.getElementById("form1").submit(); 
-      }
+	var emp,sd,ed,nod;
+	sd =  document.getElementById("startdate").value;
+	ed =  document.getElementById("enddate").value;
+	nod = document.getElementById("noofdays").value;
+		if(emp == "" || sd == "" || ed == "" || nod == "")
+		{
+			if(emp == "") {
+			document.getElementById("employeename_validate").innerHTML = "Please fill in the employee name field"; 
+			}
+			else if(sd == "") {
+			document.getElementById("sd_validate").innerHTML = "Please fill in the start date field"; 
+			}
+			else if(ed == "") {
+			document.getElementById("ed_validate").innerHTML = "Please fill in the end date field"; 
+			}
+			else if(nod == "") {
+			document.getElementById("nod_validate").innerHTML = "Please fill in the no. of days field"; 
+			}
+		}
+		else {
+			document.getElementById("form1").submit(); 
+		}
 }
 </script>
 <?php if(isset($message)) {
 	if($message == "true") { ?> <div class="alert"> <?php if($mailsent == "true") {echo "Leave has been approved. An email has been sent to the employee."; } else { echo "Leave request has been approved. But there was an error in sending email to the employee.";}?></div> 
 	<?php }
 	else { ?> <div class="alert"> <?php echo "Leave hasn't been approved.";?></div>
-	<?php 
-	
-	
+	<?php 		
 	}
 	?><?php }?>
 <?php $this->load->view("pages/adminmenu")?>

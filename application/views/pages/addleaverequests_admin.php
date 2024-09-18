@@ -85,48 +85,39 @@
 
 <script>
  window.addEventListener('load', function () {
-document.getElementById('submit-btn').addEventListener(
-  'click',
-  function(e) {
-  e.preventDefault();
-  
-var emp,sd,ed,noofdays;
-sd =  document.getElementById("startdate").value;
-ed =  document.getElementById("enddate").value;
-noofdays = document.getElementById("noofdays").value;
-if(sd == "" || ed == "" || noofdays == "")
-      {
-      
-       if(sd == "") {
-          document.getElementById("sd_validate").innerHTML = "Please fill in the start date field"; 
-        }
-		else if(ed == "") {
-          document.getElementById("ed_validate").innerHTML = "Please fill in the end date field"; 
-        }
-		else if(noofdays == "") {
-          document.getElementById("nod_validate").innerHTML = "Please fill in the no. of days field"; 
-        }
-      }
-      else {
-
-        grecaptcha.ready(function() {
-          grecaptcha.execute('6LeQ6A4aAAAAAKe29UyIDwcqvmwikoKhAaE-80GT', {action: 'submit'}).then(function(token) {
-              // Add your logic to submit to your backend server here.
-              console.log("Token",token);
-              if(token != "")
-              {
-                document.getElementById("token").value = token;
-                document.getElementById("form1").submit(); 
-              }
-              
-
-          });
-        });
-        
-      }
-        
-      });
-
-      
+    document.getElementById('submit-btn').addEventListener(
+      'click',
+      function(e) {
+      e.preventDefault();
+      var emp,sd,ed,noofdays;
+      sd =  document.getElementById("startdate").value;
+      ed =  document.getElementById("enddate").value;
+      noofdays = document.getElementById("noofdays").value;
+      if(sd == "" || ed == "" || noofdays == "")
+            {            
+               if(sd == "") {
+                document.getElementById("sd_validate").innerHTML = "Please fill in the start date field"; 
+                 }
+               else if(ed == "") {
+                document.getElementById("ed_validate").innerHTML = "Please fill in the end date field"; 
+                }
+               else if(noofdays == "") {
+                document.getElementById("nod_validate").innerHTML = "Please fill in the no. of days field"; 
+                }
+            }
+            else {
+                grecaptcha.ready(function() {
+                grecaptcha.execute('6LeQ6A4aAAAAAKe29UyIDwcqvmwikoKhAaE-80GT', {action: 'submit'}).then(function(token) {
+                    // Add your logic to submit to your backend server here.
+                    console.log("Token",token);
+                    if(token != "")
+                    {
+                      document.getElementById("token").value = token;
+                      document.getElementById("form1").submit(); 
+                    }                    
+                });
+              });              
+            }        
+      });      
  });
    </script>

@@ -15,38 +15,36 @@
 <script type="text/javascript">
 function validate()
 {
-var emp,sd,ed,nod;
+    var emp,sd,ed,nod;
 
-sd =  document.getElementById("startdate").value;
-ed =  document.getElementById("enddate").value;
-nod = document.getElementById("noofdays").value;
-    if(emp == "" || sd == "" || ed == "" || nod == "")
-      {
-        if(emp == "") {
-          document.getElementById("employeename_validate").innerHTML = "Please fill in the employee name field"; 
-        }
-        else if(sd == "") {
-          document.getElementById("sd_validate").innerHTML = "Please fill in the start date field"; 
-        }
-		else if(ed == "") {
-          document.getElementById("ed_validate").innerHTML = "Please fill in the end date field"; 
-        }
-		else if(nod == "") {
-          document.getElementById("nod_validate").innerHTML = "Please fill in the no. of days field"; 
-        }
-      }
-      else {
-         document.getElementById("form1").submit(); 
-      }
+    sd =  document.getElementById("startdate").value;
+    ed =  document.getElementById("enddate").value;
+    nod = document.getElementById("noofdays").value;
+        if(emp == "" || sd == "" || ed == "" || nod == "")
+          {
+            if(emp == "") {
+              document.getElementById("employeename_validate").innerHTML = "Please fill in the employee name field"; 
+            }
+            else if(sd == "") {
+              document.getElementById("sd_validate").innerHTML = "Please fill in the start date field"; 
+            }
+        else if(ed == "") {
+              document.getElementById("ed_validate").innerHTML = "Please fill in the end date field"; 
+            }
+        else if(nod == "") {
+              document.getElementById("nod_validate").innerHTML = "Please fill in the no. of days field"; 
+            }
+          }
+          else {
+            document.getElementById("form1").submit(); 
+          }
 }
 </script>
 <?php if(isset($message)) {
 	if($message == "true") { ?> <div class="alert"> <?php echo "Leave has been approved.";?></div> 
 	<?php }
 	else { ?> <div class="alert"> <?php echo "Leave hasn't been added approved.";?></div>
-	<?php 
-	
-	
+	<?php 	
 	}
 	?><?php }?>
 <?php $this->load->view("pages/adminmenu")?>
@@ -56,15 +54,14 @@ nod = document.getElementById("noofdays").value;
 <div class="hero-unit">
 <?php 
 if(isset($leaverequestsbyid)) {
-foreach($leaverequestsbyid as $rows){
-	
-	$requestid = $rows['id'];
-	$startdate = $rows['startdate'];
-	$enddate = $rows['enddate'];
-	$employeeid = $rows['employee_id'];
-	$vacationtypeid = $rows['vacationtypeid'];
-	$username = $rows['username'];
-}
+    foreach($leaverequestsbyid as $rows){      
+      $requestid = $rows['id'];
+      $startdate = $rows['startdate'];
+      $enddate = $rows['enddate'];
+      $employeeid = $rows['employee_id'];
+      $vacationtypeid = $rows['vacationtypeid'];
+      $username = $rows['username'];
+    }
 
 ?>
 <?php echo form_open('vacation/addandApproveEmployeeleaves', array('class' => 'form-add-leaves','id' => 'form1')) ?>

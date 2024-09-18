@@ -11,25 +11,23 @@
    
 function validate()
 {
-var ccode;
-
-ccode =  document.getElementById("clientcode").value;
-  
-        if(ccode == "") {
-          document.getElementById("ccode_validate").innerHTML = "Please fill in the Client code field"; 
-        }            
-      else {
-         document.getElementById("form1").submit(); 
-      }
+	var ccode;
+	ccode =  document.getElementById("clientcode").value;
+		if(ccode == "") {
+			document.getElementById("ccode_validate").innerHTML = "Please fill in the Client code field"; 
+			}            
+		else {
+			document.getElementById("form1").submit(); 
+		}
 }
 </script>
 <?php 
  foreach($clientDetails as $row){
-$id = $row["id"];
-$clientname  = $row["clientname"];
-$client_code = $row["client_code"];
-$enabled = $row["enabled"];
-$consolidated_billing_required = $row["consolidated_billing_for_retainer"];
+	$id = $row["id"];
+	$clientname  = $row["clientname"];
+	$client_code = $row["client_code"];
+	$enabled = $row["enabled"];
+	$consolidated_billing_required = $row["consolidated_billing_for_retainer"];
 
 }?>
 <?php if(isset($message)) {?><div class="alert"> <?php echo $message;?></div><?php }?>

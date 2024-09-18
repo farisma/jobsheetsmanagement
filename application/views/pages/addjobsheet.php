@@ -17,31 +17,31 @@
   </script>
 <script type="text/javascript">
 function getJobcodes(value,name) {
-         var clientid = value;
+          var clientid = value;
 		  jQuery.ajax({
-		type: "POST",
-		url: "<?php echo base_url(); ?>" + "index.php/ajaxToGetJobcodes/"+name,
-		data: $('#addjobsheetform').serialize(),
-		dataType: "json",
-		success: function(res) {
-		if (res)
-		{
-		         var jobCodeSelector = $("select[name='"+name+"']").parent().closest('td').next('td').find('select');  
-				 //jobCodeSelector.attr("size","10");
-                  jobCodeSelector.empty();
-				  console.log(res);
-				  jQuery.each(res, function( key, value ) {
-				  jobCodeSelector.prepend($("<option></option>").attr("value",key).text(value));
-				});
-				jobCodeSelector.prepend("<option value='' selected='selected'>Choose Job no.</option>");
-		
-		}
-		else 
-		{
-		          var jobCodeSelector = $("select[name='"+name+"']").parent().closest('td').next('td').find('select');  
-                  jobCodeSelector.empty();
-		}
-		}
+		  type: "POST",
+		  url: "<?php echo base_url(); ?>" + "index.php/ajaxToGetJobcodes/"+name,
+		  data: $('#addjobsheetform').serialize(),
+		  dataType: "json",
+		  success: function(res) {
+				if (res)
+				{
+						var jobCodeSelector = $("select[name='"+name+"']").parent().closest('td').next('td').find('select');  
+						//jobCodeSelector.attr("size","10");
+						jobCodeSelector.empty();
+						console.log(res);
+						jQuery.each(res, function( key, value ) {
+						jobCodeSelector.prepend($("<option></option>").attr("value",key).text(value));
+						});
+						jobCodeSelector.prepend("<option value='' selected='selected'>Choose Job no.</option>");
+				
+				}
+				else 
+				{
+						var jobCodeSelector = $("select[name='"+name+"']").parent().closest('td').next('td').find('select');  
+						jobCodeSelector.empty();
+				}
+		  }
 		});
  }
 </script>
@@ -105,16 +105,16 @@ $(document).ready(function(){
 		data: $('#addjobsheetform').serialize(),
 		dataType: "json",
 		success: function(res) {
-		if (res)
-		{
-		       jQuery.each(res, function( key, value ) {
-				  $("div.alert").html(value);
-				});
-		}
-		else 
-		{
-		      alert("Error.");
-		}
+			if (res)
+			{
+				jQuery.each(res, function( key, value ) {
+					$("div.alert").html(value);
+					});
+			}
+			else 
+			{
+				alert("Error.");
+			}
 		}
 		});
   

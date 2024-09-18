@@ -118,7 +118,7 @@ foreach($leaverequestsbyid as $rows){
 		</td>
 		</tr>
          <tr>
-        <td><input class="btn" type="button" value="Approve" onclick="Javascript: return validate()"></td>
+        <td><input class="btn" type="button" value="Approve" onclick="Javascript: return validate()"></td> 
          
         </tr>
 	 </table>

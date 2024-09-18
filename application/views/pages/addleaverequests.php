@@ -36,43 +36,45 @@ $hideform = 0;
 	    <tr><th colspan="2"><h2>Leave Management - Apply for leave</h2></th></tr>
 	    <tr>
 		   <td>Name:</td><?php ?>
-           <td><?php echo $user['username']?><input type="hidden" id="userid" name="userid" value="<?php echo $user['id']?>"></td>
-		</tr>
-        <tr>
+       <td><?php echo $user['username']?><input type="hidden" id="userid" name="userid" value="<?php echo $user['id']?>"></td>
+		  </tr>
+      <tr>
         <td>Start date:</td>
-         <td>
+        <td>
           <input type="text" name="startdate" id="startdate"  style="text-transform:uppercase;"><span id="sd_validate" style="color:red;"></span>
-         </td>
-        </tr>
-		   <tr>
+        </td>
+      </tr>
+		  <tr>
         <td>End date:</td>
-         <td>
+        <td>
           <input type="text" name="enddate" id="enddate" style="text-transform:uppercase;"><span id="ed_validate" style="color:red;"></span>
-         </td>
-        </tr>
+        </td>
+      </tr>
 		<tr>
-        <td>No. of days:</td>
-         <td>
+       <td>No. of days:</td>
+       <td>
           <input type="text" name="noofdays" id="noofdays" style="text-transform:uppercase;"><span id="nod_validate" style="color:red;"></span>
-         </td>
-        </tr>
+       </td>
+     </tr>
 	
 		<tr>
-		<td>Vacation Type</td>
-		<td>
-		<select name="vacation_type" id="vacation_type">
-		<?php 
-		if(isset($vacationtypes))  {
-		foreach($vacationtypes as $rows => $values) {?>
-		<?php ?>
-		<option value="<?php echo $rows;?>"><?php echo $values;?></option>
-		<?php } } ?>
-		</select>
-		</td>
+		   <td>Vacation Type</td>
+		   <td>
+		      <select name="vacation_type" id="vacation_type">
+          <?php 
+          if(isset($vacationtypes))  {
+          foreach($vacationtypes as $rows => $values) {?>
+          <?php ?>
+          <option value="<?php echo $rows;?>"><?php echo $values;?></option>
+          <?php } } ?>
+		      </select>
+		   </td>
 		</tr>
          <tr>
-        <td>	            <input type="hidden" id="token" name="token">
-<input class="btn" type="button" id="submit-btn" value="Add" ></td>
+        <td>
+          <input type="hidden" id="token" name="token">
+          <input class="btn" type="button" id="submit-btn" value="Add" >
+        </td>
          
         </tr>
 	 </table>
@@ -85,43 +87,36 @@ $hideform = 0;
 document.getElementById('submit-btn').addEventListener(
   'click',
   function(e) {
-  e.preventDefault();
-        var emp,sd,ed,noofdays;
-
-sd =  document.getElementById("startdate").value;
-ed =  document.getElementById("enddate").value;
-noofdays = document.getElementById("noofdays").value;
-if(sd == "" || ed == "" || noofdays == "")
-      {
-      
-        if(sd == "") {
-          document.getElementById("sd_validate").innerHTML = "Please fill in the start date field"; 
-        }
-		else if(ed == "") {
-          document.getElementById("ed_validate").innerHTML = "Please fill in the end date field"; 
-        }
-		else if(noofdays == "") {
-          document.getElementById("nod_validate").innerHTML = "Please fill in the no. of days field"; 
-        }
-      }
-      else {
-
-        grecaptcha.ready(function() {
-          grecaptcha.execute('6LeQ6A4aAAAAAKe29UyIDwcqvmwikoKhAaE-80GT', {action: 'submit'}).then(function(token) {
-              // Add your logic to submit to your backend server here.
-              console.log(token);
-              if(token != "")
-              {
-                document.getElementById("token").value = token;
-                document.getElementById("form1").submit(); 
-              }
-              
-
-          });
-        });
-        
-      }
-        
+      e.preventDefault();
+      var emp,sd,ed,noofdays;
+      sd =  document.getElementById("startdate").value;
+      ed =  document.getElementById("enddate").value;
+      noofdays = document.getElementById("noofdays").value;
+        if(sd == "" || ed == "" || noofdays == "")
+          {      
+            if(sd == "") {
+              document.getElementById("sd_validate").innerHTML = "Please fill in the start date field"; 
+            }
+            else if(ed == "") {
+              document.getElementById("ed_validate").innerHTML = "Please fill in the end date field"; 
+            }
+            else if(noofdays == "") {
+                  document.getElementById("nod_validate").innerHTML = "Please fill in the no. of days field"; 
+                }
+          }
+          else {
+            grecaptcha.ready(function() {
+            grecaptcha.execute('6LeQ6A4aAAAAAKe29UyIDwcqvmwikoKhAaE-80GT', {action: 'submit'}).then(function(token) {
+                  // Add your logic to submit to your backend server here.
+                  console.log(token);
+                  if(token != "")
+                  {
+                    document.getElementById("token").value = token;
+                    document.getElementById("form1").submit(); 
+                  }                  
+              });
+            });            
+          }                 
       });
 
       

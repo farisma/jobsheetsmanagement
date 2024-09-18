@@ -65,22 +65,7 @@ $("input[name='date']").datepicker({dateFormat: "yy-mm-dd"});
             </div>
             
         </div>
-	
-	 <?php
-		//$d[]=strtotime("+1 Months");
-		//$d2=strtotime("+2 Months");
 
-		//$current_month  = date("Y-m-d");
-		//$next_month     = date("Y-m-d", $d);
-		//$next_month2    = date("Y-m-d", $d2);
-		
-		//$thismonth_noofdays  =  cal_days_in_month(CAL_GREGORIAN, date("m"), date("Y"));
-		//$nextmonth_noofdays  =  cal_days_in_month(CAL_GREGORIAN, date("m",$d), date("Y",$d));
-		//$nextmonth_noofdays2 =  cal_days_in_month(CAL_GREGORIAN, date("m",$d2), date("Y",$d2));
-		
-	
-		
-	 ?>
 	 <?php 
 	   echo "<table>";
 	   /*Creating an array that contains all the vacation dates per person, so that it can be used later for traversing*/
@@ -99,7 +84,6 @@ $("input[name='date']").datepicker({dateFormat: "yy-mm-dd"});
 				  
 	  }	
 	 ?>
-	<?php //print_r($vacationdetailsbyid);?>
 	<?php if(isset($vacationdetailsbyid)) {
     $no_of_days =0;
 	$no_of_sickdays = 0;
@@ -107,7 +91,7 @@ $("input[name='date']").datepicker({dateFormat: "yy-mm-dd"});
 	$no_of_unpaiddays =0;
 	?>
 	<?php 
-	//print_r($vacationdetailsbyid);
+	
 	foreach($vacationdetailsbyid as $rows => $values) {
 		    $vacdet[$rows]['employee_id']  = $values['employee_id'];
 		    $vacdet[$rows]['username']  = $values['username'];
@@ -115,100 +99,60 @@ $("input[name='date']").datepicker({dateFormat: "yy-mm-dd"});
 			$vacdet[$rows]['enddate']   = $values['enddate'];
 			$vacdet[$rows]['noofdays']  = $values['noofdays'];
 			$vacdet[$rows]['vacationtype'] = $values['vacationtype'];
-			//echo $vacdet[$rows]['vacationtype'];
-		        $checkvacationtype = $vacdet[$rows]['vacationtype'];
-				$period = new DatePeriod(new DateTime($vacdet[$rows]['startdate']), new DateInterval('P1D'), new DateTime($vacdet[$rows]['enddate']. "+ 1 Day"));
-				//print_r($period);
-				//print_r($checkvacationtype);
+			
+		    $checkvacationtype = $vacdet[$rows]['vacationtype'];
+			$period = new DatePeriod(new DateTime($vacdet[$rows]['startdate']), new DateInterval('P1D'), new DateTime($vacdet[$rows]['enddate']. "+ 1 Day"));				
 				if($checkvacationtype == "Annual")
-				 {
-					 
+				 {					 
 					 $no_of_days+=  $vacdet[$rows]['noofdays'];
-					 foreach ($period as $dateperperson) {
-						
+					 foreach ($period as $dateperperson) {						
 						$datesperperson[] = $dateperperson->format("Y-m-d");
 					}
 				 }
 				 if($checkvacationtype == "Sick")
 				 {
 					$no_of_sickdays+=  $vacdet[$rows]['noofdays'];
-					foreach ($period as $dateperperson) {
-						
+					foreach ($period as $dateperperson) {						
 						$sickdatesperperson[] = $dateperperson->format("Y-m-d");
 					}
 				 }
 				 if($checkvacationtype == "Casual")
 				 {
 					$no_of_casualdays+=  $vacdet[$rows]['noofdays'];
-					foreach ($period as $dateperperson) {
-						
+					foreach ($period as $dateperperson) {						
 						$casualdatesperperson[] = $dateperperson->format("Y-m-d");
 					}
 				 }
 				 if($checkvacationtype == "Unpaid")
 				 {
 					$no_of_unpaiddays+=  $vacdet[$rows]['noofdays'];
-					foreach ($period as $dateperperson) {
-						
+					foreach ($period as $dateperperson) {						
 						$unpaiddatesperperson[] = $dateperperson->format("Y-m-d");
 					}
-				 }
-				
-			
-			
-		?>
-	
-	<?php }
-//echo $unpaiddatesperperson;	
-//echo $casualdatesperperson;	
-
-if((isset($unpaiddatesperperson) && count($unpaiddatesperperson) == 0) || !(isset($unpaiddatesperperson))) {
-
-	$unpaiddatesperperson = "";
-}
-if((isset($sickdatesperperson) && count($sickdatesperperson) == 0) || !(isset($sickdatesperperson))) {
-
-	$sickdatesperperson = "";
-}
-if((isset($casualdatesperperson) && count($casualdatesperperson) == 0) || !(isset($casualdatesperperson))) {
-
-	$casualdatesperperson = "";
-}
-if((isset($datesperperson) && count($datesperperson) == 0) || !(isset($datesperperson))) {
-
-	$datesperperson = "";
-}
-
-	/*if(isset($datesperperson) && (count($datesperperson) == 0 || (!isset($datesperperson)))) {
-
-	$datesperperson = "";
-}
-	if(isset($unpaiddatesperperson) && (count($unpaiddatesperperson) == 0 || (!isset($unpaiddatesperperson)))) {
-echo "unpaid";
-	$unpaiddatesperperson = "";
-}
-if(isset($sickdatesperperson) && (count($sickdatesperperson) == 0 || (!isset($sickdatesperperson)))) {
-
-	$sickdatesperperson = "";
-}
-if(isset($casualdatesperperson) && (count($casualdatesperperson) == 0 || (!isset($casualdatesperperson)))) {
-echo "casual";
-	$casualdatesperperson = "";
-}*/
-
-	
+				 }										
+			 }
+	if((isset($unpaiddatesperperson) && count($unpaiddatesperperson) == 0) || !(isset($unpaiddatesperperson))) {
+		$unpaiddatesperperson = "";
+	}
+	if((isset($sickdatesperperson) && count($sickdatesperperson) == 0) || !(isset($sickdatesperperson))) {
+		$sickdatesperperson = "";
+	}
+	if((isset($casualdatesperperson) && count($casualdatesperperson) == 0) || !(isset($casualdatesperperson))) {
+		$casualdatesperperson = "";
+	}
+	if((isset($datesperperson) && count($datesperperson) == 0) || !(isset($datesperperson))) {
+		$datesperperson = "";
+	}	
 	} 	
-	
-	?>
+					
+					?>
 
 
 </div>
 
 <script type="text/javascript">
-   window.onload = function(){
-   
-   getNextMonths();
-   
+   window.onload = function(){   
+   getNextMonths();   
 }
 
 function getNextMonths() {	
@@ -220,7 +164,7 @@ var sickleavedates = <?php echo json_encode($sickdatesperperson); ?>;
 var unpaidleavedates = <?php echo json_encode($unpaiddatesperperson); ?>;
 console.log(datesofvac);
 	
-	    var month_name = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+	var month_name = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 	var date_cur,monthsinayear,noofdays_currentmonth;
 	var monthsinayear_dates = new Array();
 	
@@ -241,23 +185,15 @@ console.log(datesofvac);
 				  var calendar = get_calendar(day_no, days,k+1,year_cur,datesofvac,casualleavedates,sickleavedates,unpaidleavedates);
 				  
 				  var head_div = document.createElement('div');
-	head_div.setAttribute("id","monthtitle"+k);
-	head_div.setAttribute("class","monthtitle");
-	
-	var cal_container = document.createElement('div');
-	cal_container.setAttribute("id","calendar-dates-"+k);
-	cal_container.setAttribute("class","calendar-dates");
-	document.getElementById("calendar-container").appendChild(cal_container);
-	
-	document.getElementById("calendar-dates-"+k).appendChild(head_div);
-	document.getElementById("monthtitle"+k).innerHTML =month_name[k]+" "+year_cur;
-	document.getElementById("calendar-dates-"+k).appendChild(calendar);
-				  
-				  //monthsinayear[$k] = strtotime($date_cur);
-				 
-				 // noofdays_currentmonth[$k] = cal_days_in_month(CAL_GREGORIAN, $k, date("Y"));
-				  
-				  
+				  head_div.setAttribute("id","monthtitle"+k);
+				  head_div.setAttribute("class","monthtitle");	
+				  var cal_container = document.createElement('div');
+				  cal_container.setAttribute("id","calendar-dates-"+k);
+				  cal_container.setAttribute("class","calendar-dates");
+				  document.getElementById("calendar-container").appendChild(cal_container);	
+				  document.getElementById("calendar-dates-"+k).appendChild(head_div);
+				  document.getElementById("monthtitle"+k).innerHTML =month_name[k]+" "+year_cur;
+				  document.getElementById("calendar-dates-"+k).appendChild(calendar);				  
 	  }	
 	 
 
