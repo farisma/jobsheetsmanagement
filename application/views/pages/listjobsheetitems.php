@@ -10,30 +10,30 @@ function getJobcodes(value,name) {
          var clientid = value;
          var cnt = 0;
 		     jQuery.ajax({
-          type: "POST",
-          url: "<?php echo base_url(); ?>" + "index.php/ajaxToGetJobcodes/"+name,
-          data: $('#listjobsheetsform').serialize(),
-          dataType: "json",
-          success: function(res) {
-          if (res)
-          {
-              var jobCodeSelector = $("select[name='"+name+"']").parent().closest('td').next('td').find('select');  /* find the select field from next td which contains the dropdown list for job codes*/
-              jobCodeSelector.empty();
-              console.log(res.length);
-              jQuery.each(res, function( key, value ) {
-                jobCodeSelector.prepend($("<option></option>").attr("value",key).text(value)); /* Append values from the controller to the select dropdown list*/
-                cnt++;
-              });
-              jobCodeSelector.prepend("<option value='' selected='selected'>Choose Job No.</option>");
-          //this is to decrease the height of a select dropdown if there are lot of job numbers for a client
-          
-          }
-          else 
-          {
-              var jobCodeSelector = $("select[name='"+name+"']").parent().closest('td').next('td').find('select');  
-              jobCodeSelector.empty();
-          }
-		}
+                type: "POST",
+                url: "<?php echo base_url(); ?>" + "index.php/ajaxToGetJobcodes/"+name,
+                data: $('#listjobsheetsform').serialize(),
+                dataType: "json",
+                success: function(res) {
+                    if (res)
+                    {
+                        var jobCodeSelector = $("select[name='"+name+"']").parent().closest('td').next('td').find('select');  /* find the select field from next td which contains the dropdown list for job codes*/
+                        jobCodeSelector.empty();
+                        console.log(res.length);
+                        jQuery.each(res, function( key, value ) {
+                            jobCodeSelector.prepend($("<option></option>").attr("value",key).text(value)); /* Append values from the controller to the select dropdown list*/
+                            cnt++;
+                        });
+                        jobCodeSelector.prepend("<option value='' selected='selected'>Choose Job No.</option>");
+                    //this is to decrease the height of a select dropdown if there are lot of job numbers for a client
+                    
+                    }
+                    else 
+                    {
+                        var jobCodeSelector = $("select[name='"+name+"']").parent().closest('td').next('td').find('select');  
+                        jobCodeSelector.empty();
+                    }
+		        }
 		});
  }
  /*
@@ -57,9 +57,9 @@ Called on clicking submit button
 		var error = 0;/* Flag to indicate error */
 		jQuery.each(res, function( key, value ) {
 				 if(key == "error") { 
-                 error = 1;                  
-                 $("#alert").html(value).addClass("alert");                 
-          }				 
+                    error = 1;                  
+                    $("#alert").html(value).addClass("alert");                 
+                  }				 
 				  else {
                   
                 var dateadded = new Date(value.date);

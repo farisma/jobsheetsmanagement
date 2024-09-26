@@ -964,6 +964,45 @@
 			return null;
 		}
 
+		public function getOpenJobsWithoutDivision($jobsdetails,$retainerorconsol){
+			$clientid = $jobsdetails['clientid'];
+			if($retainerorconsol == true) {
+				// if retainerorconsol is true, it should select either retainer jobs or consolidated jobs
+			  //$ret = 'y';
+			  $q = "and (retainer_c_job = 'y' or consolidatedB_c_job = 'y')";
+			} 
+			else {
+				//jobs apart from retainer or consolidated jobs
+			  $q = "and (retainer_c_job = 'n' and consolidatedB_c_job = 'n')";
+			}
+			$query = $this->db->query("SELECT t1.id,t1.description,t1.date,t1.job_no,t1.jobname,t1.quote,t1.division,t1.jobclosed,t1.retainer_c_job,t1.consolidatedB_c_job FROM jobs as t1 WHERE t1.client_id = '".$clientid."' and t1.enabled='y' and (t1.jobclosed != 'y' and t1.invoiced != 'y') ".$q."");    
+			if ($query->num_rows() > 0)
+			{
+				$i = 0;
+				
+				foreach ($query->result() as $row)
+				{
+					
+					
+						$result[$i]["id"] =  $row->id;
+						$result[$i]["date"] =  $row->date;
+						$result[$i]["jobno"] =  $row->job_no;					
+						$result[$i]["jobname"] =  $row->jobname;
+						$result[$i]["description"] =  $row->description;
+						$result[$i]["quote"] =  $row->quote;
+						$result[$i]["division"] =  $row->division;
+						$result[$i]["jobclosed"] =  $row->jobclosed;					
+						$i++;
+						
+						
+				
+				}
+				
+				return $result;
+			}
+			return null;
+		}
+
 		public function add_division($division){
 			$data = array(
 				"division" => $division["division"],
@@ -1041,8 +1080,9 @@
 
 		public function getDivisionsPerClientforOpenJobs($clientdetails) {
 			$clientid = $clientdetails['clientid'];
-			$query = $this->db->query("SELECT division FROM jobs where client_id = '".$clientid."' and (jobclosed != 'y' and invoiced != 'y') and division != '' and enabled = 'y' group by division");
+			$query = $this->db->query("SELECT division FROM jobs where client_id = '".$clientid."' and (jobclosed != 'y' and invoiced != 'y') and (division != '' && division IS NOT NULL) and enabled = 'y' group by division");
 			if ($query->num_rows() > 0) 
+
 			return $query->result_array();
 		}
 
@@ -1058,11 +1098,12 @@
 		    else return null; 		
 		}
 
-		public function getAllDivisionsandColors() {
-			$query = $this->db->query("select division,color,textcolor from divisions");
+		public function getAllDivisionsandColors($client) {
+			$query = $this->db->query("select division,color,textcolor from divisions where client='".$client."'");
 			if ($query->num_rows() > 0) {
 				return $query->result_array();
 			}
+			return null;
 		}
 
 		public function getJobsPerDivision($clientdetails,$division, $retainerorconsol) {
@@ -1097,6 +1138,7 @@
 	}	
 
 	public function getOpenJobsPerDivision($clientdetails,$division, $retainerorconsol) {
+
 		if($retainerorconsol == true) {
 			// if retainerorconsol is true, it should select either retainer jobs or consolidated jobs
 		  //$ret = 'y';
@@ -1106,7 +1148,59 @@
 			//jobs apart from retainer or consolidated jobs
 		  $q = "and (retainer_c_job = 'n' and consolidatedB_c_job = 'n')";
 		}
-		$query = $this->db->query("SELECT t1.id,t1.description,t1.date,t1.job_no,t1.jobname,t1.quote,t1.division,t1.jobclosed,t1.retainer_c_job,t2.id,t2.division FROM jobs as t1,divisions as t2 WHERE t1.client_id = '".$clientdetails['clientid']."' and (t1.jobclosed !='y' and t1.invoiced !='y') and t1.enabled = 'y' and t1.division = t2.id and t1.division = '".$division."'".$q."");    
+		//return $clientdetails;
+        //$querystr = "SELECT t1.id,t1.description,t1.date,t1.job_no,t1.jobname,t1.quote,t1.division,t1.jobclosed,t1.retainer_c_job,t2.id,t2.division FROM jobs as t1,divisions as t2 WHERE t1.client_id = '".$clientdetails['clientid']."' and (t1.jobclosed !='y' and t1.invoiced !='y') and t1.enabled = 'y' and t1.division = t2.id and t1.division = '".$division."'".$q."";
+		if($clientdetails['closed'] != 'y' && $clientdetails['invoiced'] != 'y') {
+			$querystr = "SELECT t1.id,t1.description,t1.date,t1.job_no,t1.jobname,t1.quote,t1.division,t1.jobclosed,t1.invoiced,t1.retainer_c_job,t2.id,t2.division FROM jobs as t1,divisions as t2 
+			WHERE t1.client_id = '".$clientdetails['clientid']."' 
+			and (t1.jobclosed !='y' and t1.invoiced !='y') 
+			and t1.enabled = 'y' and t1.division = t2.id 
+			and t1.division = '".$division."' ".$q."";
+			//$status = "WIP";
+		}
+		// else 
+		else if($clientdetails['closed'] == 'y' && $clientdetails['invoiced'] != 'y') {
+			$querystr = "(SELECT t1.id,t1.description,t1.date,t1.job_no,t1.jobname,t1.quote,t1.division,t1.jobclosed,t1.invoiced,t1.retainer_c_job,t2.id,t2.division FROM jobs as t1,divisions as t2 
+			WHERE t1.client_id = '".$clientdetails['clientid']."' 
+			and (t1.jobclosed !='y' and t1.invoiced !='y') 
+			and t1.enabled = 'y' and t1.division = t2.id 
+			and t1.division = '".$division."' ".$q.")".
+			" UNION ALL "
+			."(SELECT t1.id,t1.description,t1.date,t1.job_no,t1.jobname,t1.quote,t1.division,t1.jobclosed,t1.invoiced,t1.retainer_c_job,t2.id,t2.division FROM jobs as t1,divisions as t2
+			WHERE t1.client_id = '".$clientdetails['clientid']."'
+			and (t1.jobclosed ='y' and t1.invoiced !='y') 
+			and MONTH(t1.dateofclosure) = '".$clientdetails['month']."'
+			and YEAR(t1.dateofclosure) = '".$clientdetails['year']."'
+			and t1.enabled = 'y' and t1.division = t2.id 			
+			and t1.division = '".$division."'".$q.")";
+			//$status = "Closed";
+		}
+		else if(($clientdetails['closed'] == 'y' && $clientdetails['invoiced'] == 'y') || ($clientdetails['closed'] != 'y' && $clientdetails['invoiced'] == 'y')) {
+			$querystr = "(SELECT t1.id,t1.description,t1.date,t1.job_no,t1.jobname,t1.quote,t1.division,t1.jobclosed,t1.invoiced,t1.retainer_c_job,t2.id,t2.division FROM jobs as t1,divisions as t2 
+			WHERE t1.client_id = '".$clientdetails['clientid']."' 
+			and (t1.jobclosed !='y' and t1.invoiced !='y') 
+			and t1.enabled = 'y' and t1.division = t2.id 
+			and t1.division = '".$division."' ".$q.")".
+			" UNION ALL "
+			."(SELECT t1.id,t1.description,t1.date,t1.job_no,t1.jobname,t1.quote,t1.division,t1.jobclosed,t1.invoiced,t1.retainer_c_job,t2.id,t2.division FROM jobs as t1,divisions as t2
+			WHERE t1.client_id = '".$clientdetails['clientid']."'
+			and (t1.jobclosed ='y' and t1.invoiced !='y') 
+			and MONTH(t1.dateofclosure) = '".$clientdetails['month']."'
+			and YEAR(t1.dateofclosure) = '".$clientdetails['year']."'
+			and t1.enabled = 'y' and t1.division = t2.id 			
+			and t1.division = '".$division."'".$q.")".
+			" UNION ALL "
+			."(SELECT t1.id,t1.description,t1.date,t1.job_no,t1.jobname,t1.quote,t1.division,t1.jobclosed,t1.invoiced,t1.retainer_c_job,t2.id,t2.division FROM jobs as t1,divisions as t2
+			WHERE t1.client_id = '".$clientdetails['clientid']."'
+			and (t1.jobclosed ='y' and t1.invoiced ='y') 
+			and MONTH(t1.dateofclosure) = '".$clientdetails['month']."'
+			and YEAR(t1.dateofclosure) = '".$clientdetails['year']."'
+			and t1.enabled = 'y' and t1.division = t2.id 			
+			and t1.division = '".$division."'".$q.")";
+			//$status = "Invoiced";
+			}
+		//return $querystr;
+		$query = $this->db->query($querystr);    
 			
 		if ($query->num_rows() > 0)
 		{
@@ -1119,7 +1213,9 @@
 			$result[$i]["description"] =  $row->description;
 			$result[$i]["quote"] =  $row->quote;
 			$result[$i]["division"] =  $row->division;
-			$result[$i]["jobclosed"] =  $row->jobclosed;					
+			$result[$i]["jobclosed"] =  $row->jobclosed;
+			$result[$i]["invoiced"] =  $row->invoiced;		
+			
 			$i++;
 			}
 			return $result;

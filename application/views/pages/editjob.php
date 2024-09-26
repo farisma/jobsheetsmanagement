@@ -103,7 +103,7 @@ function validate()
 						<span id="projecttype_validate" style="color:red;"></span>
 			</td>	
 		</tr>
-		<?php if($clientid == 18) {?>
+		<?php //if($clientid == 18) {?>
 		<tr>
 		<td colspan="1"><span class="quote_field show">Quote:</span></td><td colspan="1">
 				   <input type="number" id="quoted_amount" name="quoted_amount" min="1" max="100000" step="0.1" class="quote_field show" value="<?php echo $quote;?>">				
@@ -121,7 +121,7 @@ function validate()
 						 </select>					
 					</td>
 		</tr>
-		<?php }?>
+		<?php //}?>
         <?php  if( (isset($ek) && $ek == "y") || (isset($retainer) && $retainer == "y") ) { // only for ek retainer jobs and other retainer jobs?>
          <tr>
         <td colspan="2"><input type="checkbox" name="retainerscope" id="retainerscope" value="y" <?php  if($retainerscope  == "y") echo "checked";?> >&nbsp;&nbsp;Scope of Work</td>

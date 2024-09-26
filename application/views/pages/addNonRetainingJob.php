@@ -21,10 +21,8 @@
 		var clientId = value;
 		var divisions_option;
 		divisions_option = $('#company_division');
-		if(clientId == 18) {
-           $(".division_field").addClass('show')
-		   $(".quote_field").addClass('show')
-				jQuery.ajax({
+	
+		jQuery.ajax({
 					type: "GET",
 					url: "<?php echo base_url(); ?>" + "index.php/ajaxToGetDivisionsByClientID/"+clientId,
 					data: {},
@@ -33,24 +31,24 @@
 						if (res)
 						{
 							//console.log(res)
-							
+							//alert(res)
+							divisions_option.addClass('show')
+							$(".division_field").addClass('show')
 							$.each(res, function(index, value) {
 								divisions_option.append($('<option></option>').val(value.id).text(value.division));
 							});
 						}
 						else 
 						{
-							$("#show_jobno").text("Error in fetching the Job no."); 
+							divisions_option.removeClass('show')
+							$(".division_field").removeClass('show')
+							divisions_option.val('')
+							//$("#show_jobno").text("Error in fetching the Job no."); 
 						}
 					}
-				});
+		});
 
-		} else {
-			$(".division_field").removeClass('show')
-			$(".quote_field").removeClass('show')
-			divisions_option.val('')
-			$('#quoted_amount').val(0)
-		}
+		 
 		jQuery.ajax({
 			type: "GET",
 			url: "<?php echo base_url(); ?>" + "index.php/ajaxToGetnonRetainerJobcodes/"+clientId,
@@ -78,10 +76,7 @@
 		//this function is called from datepicker aswell. In that case value  will be null. then will selct the value from dropdown
 		if(value == null) clientId = $("#clientR").val(); else clientId = value;
 		divisions_option = $('#retainer_company_division');
-		if(clientId == 18) {
-			
-           $(".retainer_division_field").addClass('show')
-		   $(".retainer_quote_field").addClass('show')
+	
 		   jQuery.ajax({
 					type: "GET",
 					url: "<?php echo base_url(); ?>" + "index.php/ajaxToGetDivisionsByClientID/"+clientId,
@@ -91,23 +86,24 @@
 						if (res)
 						{
 							//console.log(res)
-							
+							divisions_option.addClass('show')
+							$(".retainer_division_field").addClass('show')
 							$.each(res, function(index, value) {
 								divisions_option.append($('<option></option>').val(value.id).text(value.division));
 							});
 						}
 						else 
 						{
-							$("#show_jobno").text("Error in fetching the Job no."); 
+							$(".retainer_division_field").removeClass('show')
+							divisions_option.removeClass('show')
+							divisions_option.val('')
+							//$("#show_jobno").text("Error in fetching the Job no."); 
 						}
 					}
 				});
-		} else {
-			$(".retainer_division_field").removeClass('show')
-			$(".retainer_quote_field").removeClass('show')
-			divisions_option.val('');
-			$('#retainer_quoted_amount').val(0)
-		}
+		
+		
+		
 
 	$("td.addto_consolidated").hide();
 	var monthNames = ["Jan", "Feb", "March", "April", "May", "June","July", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -182,9 +178,7 @@
 		//this function is called from datepicker aswell. In that case value  will be null. then will selct the value from dropdown
 		if(value == null) clientId = $("#clientConsolidatedB").val(); else clientId = value;
 		divisions_option = $('#consol_company_division');
-		if(clientId == 18) {
-           $(".consolidated_division_field").addClass('show')
-		   $(".consolidated_quote_field").addClass('show')
+	
 		   jQuery.ajax({
 					type: "GET",
 					url: "<?php echo base_url(); ?>" + "index.php/ajaxToGetDivisionsByClientID/"+clientId,
@@ -195,22 +189,22 @@
 						{
 							//console.log(res)
 							//divisions_option = $('#consol_company_division');
+							divisions_option.addClass('show')
+							$(".consolidated_division_field").addClass('show')
 							$.each(res, function(index, value) {
 								divisions_option.append($('<option></option>').val(value.id).text(value.division));
 							});
 						}
 						else 
 						{
-							$("#show_jobno").text("Error in fetching the Job no."); 
+							divisions_option.removeClass('show')
+							$(".consolidated_division_field").removeClass('show')
+							divisions_option.val('')
+							//$("#show_jobno").text("Error in fetching the Job no."); 
 						}
 					}
 				});
-		} else {
-			$(".consolidated_division_field").removeClass('show')
-			$(".consolidated_quote_field").removeClass('show')
-			divisions_option.val('');
-			$('#consol_quoted_amount').val(0)
-		}
+		
 	var monthNames = ["Jan", "Feb", "March", "April", "May", "June","July", "Aug", "Sep", "Oct", "Nov", "Dec"];
 	//var retainerClients = ["18","75"]; //Client ids apart from EKSC that are part of monthly retainers and need consolidated job no, here its mubadala
 		var clientConsolidatedB = $("#clientConsolidatedB").val();		

@@ -129,7 +129,7 @@ $route['edit-project-type/(:any)'] = "clients/edit_project_type";
 $route['delete-project-type/(:any)'] = "clients/deleteProjectType";
 
 
-$route['view_reports'] = "clients/viewreports";
+$route['view_reports'] = "clients/viewreportspage";
 $route['findreport'] = "clients/viewreports";
 $route['exportmonthlyreport'] = "clients/exportmonthlyreport";
 $route['add-division'] = "clients/add_division";
@@ -137,7 +137,8 @@ $route['list_divisions'] = "clients/list_divisions";
 $route['edit-division/(:any)'] = "clients/edit_division";
 $route['delete-division/(:any)'] = "clients/delete_division";
 
-$route['findstatusreport'] = "clients/viewstatusreports";
+// $route['findstatusreport'] = "clients/viewstatusreports";
+$route['findstatusreport'] = "clients/getAjaxStatusReports";
 $route['exportmonthlyreportalljobs'] = "clients/exportmonthlyreportalljobs";
 $route['ajaxToGetDivisionsByClientID/(:any)'] = "clients/find_divisions_by_client";
 /* End of file routes.php */
