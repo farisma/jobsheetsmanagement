@@ -90,8 +90,15 @@ ul#genrelist li:first-child {margin-left:0px;}
 ul#genrelist li { cursor:pointer; display:inline; padding:4px 4px; font-size:11px; background:#08c; color:#fff; font-weight:bold; margin-left:10px;}
 
 ul#genrelist li.selected {background:#fff; color:#08c;}
-
-.smallfont {font-size:11px; font-weight:normal;}
+table.listjobs tr th {
+	font-size:11px;
+	line-height: 14px;
+}
+table.listjobs tr td {
+	font-size:11px;
+	line-height: 14px;
+}
+.smallfont {font-size:10px; font-weight:normal;}
 
 /* Calendar view style*/
 

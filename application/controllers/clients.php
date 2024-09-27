@@ -1903,4 +1903,13 @@
 			$divisions = $this->Clients_model->getDivisionbyClientID($clientid);
 			echo json_encode($divisions);	
 		}
+
+
+		// function to get job details based on id for editing inline
+		public function getJobForEdit(){
+			$jobid =  $this->uri->segment(2); 
+			if($jobid != null) $jobDetails = $this->Clients_model->selectJobById($jobid);
+			echo json_encode($jobDetails);
+
+		}
 	}	

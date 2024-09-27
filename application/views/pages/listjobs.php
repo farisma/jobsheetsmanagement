@@ -9,7 +9,33 @@
   $(document).ready(function(){
   $("input[name='date']").datepicker({dateFormat: "yy-mm-dd"});
    $("#listjobs").freezeHeader();
+
+   $(".editOnClick").click(function(e){
+	e.preventDefault();
+	var jobnoId = $(this).data("id")
+	var parent = $(this).closest('tr');
+	console.log(parent)
+	console.log(jobnoId)
+	jQuery.ajax({
+		type: "GET",
+		url: "<?php echo base_url(); ?>"+"index.php/get-job-for-edit/"+jobnoId,
+		data: {},
+		dataType: "json",
+		success: function(res) {
+			if (res)
+				{
+					console.log(res)
+					parent.after('<tr><td colspan="1">Test</td></tr>')
+				}
+			else 
+				{
+					//msg = "Error occurred. Disable unsuccessfull";
+				}				
+		}
+		});
+  })
   });
+  
 function disableJobById(value)
   {
 	  var jobnoId = value;	   
@@ -145,18 +171,21 @@ echo "<option value=".$key.">".$rows."</option>";
 <table class="listjobs" id="listjobs">
 	<thead>
 		<tr style="background:#dddddd;">
-			<th width="50">&nbsp;</th>
-			<th width="50" class="smallfont">Retainer</th>
-			<th width="50" class="smallfont">Billable</th>
-			<th width="50" class="smallfont">Approved</th>
-			<th width="50" class="smallfont">Invoiced</th>
-			<th width="50" class="smallfont">Consolidated billing</th>
-			<th width="70">Date</th>
+			<th width="10">&nbsp;</th>
+			<th width="40" class="smallfont">Retainer</th>
+			<th width="40" class="smallfont">Billable</th>
+			<th width="45" class="smallfont">Approved</th>
+			<th width="40" class="smallfont">Invoiced</th>
+			<th width="50" class="smallfont">Consol. billing</th>
+			<th width="50">Date</th>
 			<th width="70">Type</th>
-			<th width="80">Job No.</th>
-			<th width="150">Job Name</th>
-			<th width="250">Description</th>
-			<th width="80">Client</th><?php if($admin) {?><th width="100">Action</th><?php }?>
+			<th width="60">Job No.</th>
+			<th width="70">Job Name</th>
+			<th width="180">Description</th>
+			<th width="70">Amount</th>
+			<th width="100">Division</th>
+			<th width="80">Client</th>
+			<?php if($admin) {?><th width="100">Action</th><?php }?>
 		</tr>
 	</thead>
  <?php
@@ -202,8 +231,10 @@ if(isset($jobs)) {foreach($jobs as $key => $rows)
 			<td><?php  echo $jobs[$key]["jobno"]; ?></td>
 			<td><?php  echo $jobs[$key]["jobname"]; ?></td>
 			<td><?php  echo $jobs[$key]["description"]; ?></td>
+			<td><?php  echo $jobs[$key]["quote"]; ?></td>
+			<td><?php  echo $jobs[$key]["division"]; ?></td>
 			<td><?php echo $jobs[$key]["clientname"];?></td>
-			<?php if($admin) {?><td><a href="<?php echo site_url('edit-job/'.$jobs[$key]["id"]) ?>">Edit</a>&nbsp;&nbsp;<a onClick="disableJobById(<?php echo $jobs[$key]["id"];?>)" href="<?php echo "#"; ?>">Disable</a>&nbsp;&nbsp;<?php  if($user == "admin"  || $user == "brandon") {?><a onClick="deleteJobById(<?php echo $jobs[$key]["id"];?>)" href="<?php echo "#"; ?>">Delete</a><?php  } ?></td><?php } ?>
+			<?php if($admin) {?><td><a data-id="<?php echo $jobs[$key]["id"] ?>" href="#" class="editOnClick">Edit inline</a><a href="<?php echo site_url('edit-job/'.$jobs[$key]["id"]) ?>">Edit</a>&nbsp;&nbsp;<a onClick="disableJobById(<?php echo $jobs[$key]["id"];?>)" href="<?php echo "#"; ?>">Disable</a>&nbsp;&nbsp;<?php  if($user == "admin"  || $user == "brandon") {?><a onClick="deleteJobById(<?php echo $jobs[$key]["id"];?>)" href="<?php echo "#"; ?>">Delete</a><?php  } ?></td><?php } ?>
 	    </tr>
 </tbody>
 <?php 

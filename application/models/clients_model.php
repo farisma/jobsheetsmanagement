@@ -423,7 +423,7 @@
 		*/	
 		public function listJobs ()
 		{
-			$query = $this->db->query("select t1.id,t1.date as dateadded,t1.job_no,t2.clientname,t1.jobname,t1.projecttype,t1.description,t1.invoiced,t1.approved,t1.ekbillable,t1.retainer_c_job,t1.eksc_retainer,t1.consolidated_check,t1.consolidated_jobno,t1.projecttype from jobs as t1,clients as t2 where t2.id = t1.client_id and t1.enabled='y' order by id desc");
+			$query = $this->db->query("select t1.id,t1.date as dateadded,t1.job_no,t2.clientname,t1.jobname,t1.projecttype,t1.description,t1.invoiced,t1.approved,t1.ekbillable,t1.retainer_c_job,t1.eksc_retainer,t1.consolidated_check,t1.consolidated_jobno,t1.projecttype,t1.division,t1.quote from jobs as t1,clients as t2 where t2.id = t1.client_id and t1.enabled='y' order by id desc");
 			
 			if ($query->num_rows() > 0)
 			{
@@ -444,7 +444,8 @@
 					$result[$i]["consolidated_check"] =  $row->consolidated_check;
 					$result[$i]["consolidated_jobno"] =  $row->consolidated_jobno;
 					$result[$i]["project_type"] =  $row->projecttype;
-					
+					$result[$i]["division"] =  $row->division;
+					$result[$i]["quote"] =  $row->quote;
 					
 					//To convert project types' id to its name in case of multiple project type in a project
 					$projecttypes = explode("/",$result[$i]["project_type"]);
