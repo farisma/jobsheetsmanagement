@@ -789,36 +789,16 @@
 		}
 		public function listjobs()
 		{
-			//echo $this->uri->segment(1).','.$this->uri->segment(2).','.$this->uri->segment(3);
-			//$pagin_offset = $this->uri->segment(2)== NULL?0:$this->uri->segment(2);
-			//echo $pagin_limit;
-			//$pagin_limit = 1000;
+			
 			$clients = $this->Clients_model->getAllClients(); //for the dropdown list for the search filter
 			$data['clients'] =  $clients;
 			$this->body_class[] = 'listjobs';
 			$this->page_title = 'List existing jobs';
-			$this->current_section = 'List of jobs';
-			
-			// $this->load->library('pagination');
-			// $config['base_url'] = $this->jobs_url;
-			// $config['total_rows'] = $this->Clients_model->countOfEnabledJobs();
-			// $config['per_page'] = $pagin_limit;
-			// $config['uri_segment'] = 2;
-			// $this->pagination->initialize($config);
-			// $data['pagin_links'] = $this->pagination->create_links();
-
-
-			// $jobs  =  $this->Clients_model->listJobsWithPaginLimit($pagin_offset,$pagin_limit);
+			$this->current_section = 'List of jobs';						
 			$jobs  =  $this->Clients_model->listJobs();
-			//echo "jobs2".count($jobs2).",";
 			$user = $this->ion_auth->user()->row_array();
 			$data['user'] = $user;
-			$data["jobs"] = $jobs;
-			
-           // echo $this->Clients_model->countOfEnabledJobs();
-			
-
-			
+			$data["jobs"] = $jobs;			          			
 			$this->render_page('pages/listjobs',$data);
 		}
 		/* Function to check if the client is retainer client like ek,dfm etc */
