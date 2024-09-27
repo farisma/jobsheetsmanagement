@@ -157,10 +157,7 @@
 						else 
 						{
               searchbtn.hide()
-							// divisions_option.removeClass('show')
-							// $(".division_field").removeClass('show')
-							// divisions_option.val('')
-							//$("#show_jobno").text("Error in fetching the Job no."); 
+							
 						}
 					},
           error: function(jqXHR, textStatus, errorThrown) {
@@ -203,18 +200,14 @@
               console.log("al2 - nonretainer",res.retainerconsol) 
               if(retainerjobs != null || retainerjobs != undefined) printClosedJobs(retainerjobs,true);
               if(nonretainerjobs != null || nonretainerjobs != undefined) printClosedJobs(nonretainerjobs,false);
-              // printClosedJobs(retainerjobs,true);
-              // printClosedJobs(nonretainerjobs,false);
+             
               searchbtn.show()
              
 						}
 						else 
 						{
               searchbtn.hide()
-							// divisions_option.removeClass('show')
-							// $(".division_field").removeClass('show')
-							// divisions_option.val('')
-							//$("#show_jobno").text("Error in fetching the Job no."); 
+						
 						}
 					},
           error: function(jqXHR, textStatus, errorThrown) {
