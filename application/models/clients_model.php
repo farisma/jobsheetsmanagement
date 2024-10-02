@@ -553,8 +553,8 @@
 			$i=1;
 			$querystring = "";
 			$queryadditional = "";
-			$querybegining ="select t1.id,t1.date as dateadded,t1.job_no,t2.clientname,t1.jobname,t1.projecttype,t1.description,t1.approved,t1.invoiced,t1.ekbillable,t1.eksc_retainer,t1.retainer_c_job,t1.consolidated_check,t1.consolidated_jobno from jobs as t1,clients as t2";
-			
+			//$querybegining ="select t1.id,t1.date as dateadded,t1.job_no,t2.clientname,t1.jobname,t1.projecttype,t1.description,t1.approved,t1.invoiced,t1.ekbillable,t1.eksc_retainer,t1.retainer_c_job,t1.consolidated_check,t1.consolidated_jobno from jobs as t1,clients as t2";
+			$querybegining = "select t1.id,t1.date as dateadded,t1.job_no,t2.clientname,t1.jobname,t1.projecttype,t1.description,t1.jobclosed,t1.invoiced,t1.approved,t1.ekbillable,t1.retainer_c_job,t1.eksc_retainer,t1.consolidated_check,t1.consolidated_jobno,t1.projecttype,t1.division,t1.quote,t3.division as divisionname from jobs as t1,clients as t2,divisions as t3";
 			foreach($queryconditions as $key=>$val){
 				if($i==1)/* if first condition then it should start with WHERE Clause */
 				{
@@ -584,7 +584,9 @@
 			}
 			
 			/* Query general conditions */
-			$querystring.=  "AND t2.id = t1.client_id and t1.enabled='y' order by id desc";
+			
+			// $querystring.=  "AND t2.id = t1.client_id and t1.enabled='y' order by id desc";
+			$querystring.=  "AND t2.id = t1.client_id and t1.enabled='y' and t1.division = t3.id order by id desc";
 			$finalquery = $querybegining.$querystring;
 			//print_r($finalquery);
 			$query = $this->db->query($finalquery);
@@ -600,16 +602,19 @@
 					$result[$i]["jobname"] =  $row->jobname;
 					$result[$i]["description"] =  $row->description;
 					$result[$i]["approved"] =  $row->approved;
+                    $result[$i]["closed"] =  $row->jobclosed;
 					$result[$i]["invoiced"] =  $row->invoiced;
 					$result[$i]["ekbillable"] =  $row->ekbillable;
 					$result[$i]["eksc_retainer"] =  $row->eksc_retainer;
 					$result[$i]["retainer_c_job"] =  $row->retainer_c_job;
 					$result[$i]["consolidated_check"] =  $row->consolidated_check;
 					$result[$i]["consolidated_jobno"] =  $row->consolidated_jobno;
-					$result[$i]["project_type"] =  $row->projecttype;
+                    $result[$i]["project_type_ids"] =  $row->projecttype;
+                    $result[$i]["division"] =  $row->divisionname;
+					$result[$i]["quote"] =  $row->quote;
 					
 					//To convert project types' id to its name in case of multiple project type in a project
-					$projecttypes = explode("/",$result[$i]["project_type"]);
+					$projecttypes = explode("/",$result[$i]["project_type_ids"]);
 					$projecttypes_concat = "";
 					for($k=0;$k<count($projecttypes);$k++) {
 					

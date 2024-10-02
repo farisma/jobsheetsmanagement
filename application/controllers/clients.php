@@ -916,7 +916,8 @@
 			}
 			else   //if there is no search  filters chosen client will be 0 and clicked on submit, it will load the list job page
 			{
-				$getResults =   $this->Clients_model->listJobs();
+				//$getResults =   $this->Clients_model->listJobs();
+				$getResults  =  $this->Clients_model->listJobsWithPaginLimit(0,1000);
 				$data["jobs"] =  $getResults;  
 				$data['searchresults'] = "yes";
 				//redirect('list-jobs');
