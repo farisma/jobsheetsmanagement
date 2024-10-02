@@ -11,7 +11,7 @@
 
 
 		//public $jobs_url = 'http://localhost/jobsheets/index.php/list-jobs'; // for pagination config
-		public $jobs_url = 'https://theandongroup.com/jobsheetmanagement/index.php/list-jobs';
+		public $jobs_url = 'https://theandongroup.com/jobsheetstest/index.php/list-jobs';
 		// public $b_emailid = "faris@theandongroup.com"; 
 		// public $account_manager_emailid = "faris@theandongroup.com";
 		// public $accountant_emailid = "faris@theandongroup.com";
@@ -809,13 +809,27 @@
 		*/	
 		public function listjobs()
 		{
+			//echo $this->uri->segment(1).','.$this->uri->segment(2).','.$this->uri->segment(3);
+			$pagin_offset = $this->uri->segment(2)== NULL?0:$this->uri->segment(2);
+			//echo $pagin_limit;
+			$pagin_limit = 1000;
 			
 			$clients = $this->Clients_model->getAllClients(); //for the dropdown list for the search filter
 			$data['clients'] =  $clients;
 			$this->body_class[] = 'listjobs';
 			$this->page_title = 'List existing jobs';
-			$this->current_section = 'List of jobs';						
-			$jobs  =  $this->Clients_model->listJobs();
+			$this->current_section = 'List of jobs';		
+			
+			$this->load->library('pagination');
+			$config['base_url'] = $this->jobs_url;
+			$config['total_rows'] = $this->Clients_model->countOfEnabledJobs();
+			$config['per_page'] = $pagin_limit;
+			$config['uri_segment'] = 2;
+			$this->pagination->initialize($config);
+			$data['pagin_links'] = $this->pagination->create_links();
+
+			 $jobs  =  $this->Clients_model->listJobsWithPaginLimit($pagin_offset,$pagin_limit);
+			// $jobs  =  $this->Clients_model->listJobs();
 			$user = $this->ion_auth->user()->row_array();
 			$data['user'] = $user;
 			$data["jobs"] = $jobs;	

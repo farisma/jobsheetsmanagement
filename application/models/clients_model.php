@@ -475,7 +475,7 @@
 			Author: Faris M A
 		*/	
 		public function listJobsWithPaginLimit($offset,$limit){
-			$query = $this->db->query("select t1.id,t1.date as dateadded,t1.job_no,t2.clientname,t1.jobname,t1.projecttype,t1.description,t1.invoiced,t1.approved,t1.ekbillable,t1.retainer_c_job,t1.eksc_retainer,t1.consolidated_check,t1.consolidated_jobno,t1.projecttype from jobs as t1,clients as t2 where t2.id = t1.client_id and t1.enabled='y' order by id desc limit ".$offset.",".$limit."");
+			$query = $this->db->query("select t1.id,t1.date as dateadded,t1.job_no,t2.clientname,t1.jobname,t1.projecttype,t1.description,t1.jobclosed,t1.invoiced,t1.approved,t1.ekbillable,t1.retainer_c_job,t1.eksc_retainer,t1.consolidated_check,t1.consolidated_jobno,t1.projecttype,t1.division,t1.quote,t3.division as divisionname from jobs as t1,clients as t2,divisions as t3 where t2.id = t1.client_id and t1.enabled='y' and t1.division = t3.id order by id desc limit ".$offset.",".$limit."");
 			
 			if ($query->num_rows() > 0)
 			{
@@ -488,6 +488,7 @@
 					$result[$i]["clientname"] =  $row->clientname;
 					$result[$i]["jobname"] =  $row->jobname;
 					$result[$i]["description"] =  $row->description;
+					$result[$i]["closed"] =  $row->jobclosed;
 					$result[$i]["invoiced"] =  $row->invoiced;
 					$result[$i]["approved"] =  $row->approved;
 					$result[$i]["ekbillable"] =  $row->ekbillable;
@@ -495,11 +496,13 @@
 					$result[$i]["eksc_retainer"] =  $row->eksc_retainer;
 					$result[$i]["consolidated_check"] =  $row->consolidated_check;
 					$result[$i]["consolidated_jobno"] =  $row->consolidated_jobno;
-					$result[$i]["project_type"] =  $row->projecttype;
+					$result[$i]["project_type_ids"] =  $row->projecttype;
+					$result[$i]["division"] =  $row->divisionname;
+					$result[$i]["quote"] =  $row->quote;
 					
 					
 					//To convert project types' id to its name in case of multiple project type in a project
-					$projecttypes = explode("/",$result[$i]["project_type"]);
+					$projecttypes = explode("/",$result[$i]["project_type_ids"]);
 					$projecttypes_concat = "";
 					for($k=0;$k<count($projecttypes);$k++) {
 					
