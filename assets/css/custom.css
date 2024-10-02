@@ -308,3 +308,19 @@ input[type="checkbox"] {
 /* .quote_field.hide, .division_field.hide, .retainer_quote_field.hide, .retainer_division_field.hide,.consolidated_quote_field.hide, .consolidated_division_field.hide {
 	display: none !important;
 } */
+
+tr.jobedit5938 td.updatestatus .success {
+    color: green;
+	font-weight:bold;
+}
+tr.jobedit5938 td.updatestatus .fail {
+	color:red;
+}
+
+.inlineEditBtn .btn.cancelBtn {
+	color:#fff !important;
+	background:#88001b !important;
+}
+.inlineEditBtn .btn {
+	margin:4px;
+}

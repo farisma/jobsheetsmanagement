@@ -9,6 +9,7 @@
 
 		public $username;
 
+
 		//public $jobs_url = 'http://localhost/jobsheets/index.php/list-jobs'; // for pagination config
 		public $jobs_url = 'https://theandongroup.com/jobsheetmanagement/index.php/list-jobs';
 		// public $b_emailid = "faris@theandongroup.com"; 
@@ -787,6 +788,25 @@
 			$data['EKretainerJobSeqNo'] =  $EKretainerJobSeqNo;
 			echo json_encode($EKretainerJobSeqNo);
 		}
+			/*
+			Function: getDivisionsAndProjectTypes()
+			List all projecttypes and job divisions to populate select dropdwon in the database.
+			Author: Faris M A
+		*/	
+		public function getDivisionsAndProjectTypes() {
+			$divisions = $this->Clients_model->getAllDivisions();
+			$projecttypes = $this->Clients_model->listProjectTypes();
+			$details = Array(
+				"divisions" => $divisions,
+				"projecttypes" => $projecttypes
+			);
+			echo json_encode($details);
+		}
+		/*
+			Function: listjobs()
+			List all jobs.
+			Author: Faris M A
+		*/	
 		public function listjobs()
 		{
 			
@@ -798,7 +818,9 @@
 			$jobs  =  $this->Clients_model->listJobs();
 			$user = $this->ion_auth->user()->row_array();
 			$data['user'] = $user;
-			$data["jobs"] = $jobs;			          			
+			$data["jobs"] = $jobs;	
+			$projecttypes =  $this->Clients_model->listProjectTypes();
+			$data["project_types"] = $projecttypes;		          			
 			$this->render_page('pages/listjobs',$data);
 		}
 		/* Function to check if the client is retainer client like ek,dfm etc */
@@ -1068,7 +1090,7 @@
 			
 			// $this->form_validation->set_rules('client', 'Client name', 'required');
 			//$this->form_validation->set_rules('date', 'Date', 'required');
-				$this->form_validation->set_rules('jobname', 'Job name', 'required');
+			$this->form_validation->set_rules('jobname', 'Job name', 'required');
 			//$this->form_validation->set_rules('description', 'Description', 'required');
 			
 			
@@ -1909,7 +1931,49 @@
 		public function getJobForEdit(){
 			$jobid =  $this->uri->segment(2); 
 			if($jobid != null) $jobDetails = $this->Clients_model->selectJobById($jobid);
+			
 			echo json_encode($jobDetails);
 
+		}
+
+		public function editJobInline() {
+			ini_set('display_errors', 1);
+			ini_set('display_startup_errors', 1);
+			error_reporting(E_ALL);
+			 // Get all GET parameters as an associative array
+			$getData = $this->input->get();	
+			$jobid = isset($getData['id']) ? $getData['id'] : null; 
+			$ekbillable = (isset($getData['billable'])) ? $getData['billable'] : 'n'; 
+			$approved = (isset($getData['approved'])) ? $getData['approved'] : 'n'; 
+			$jobclosed = (isset($getData['closed'])) ? $getData['closed'] : 'n'; 
+			if($jobclosed == "y") $dateofclosure = date('Y-m-d'); else $dateofclosure = null;
+			$invoiced = (isset($getData['invoiced'])) ? $getData['invoiced'] : 'n'; 
+			$consol = (isset($getData['consol']) && $getData['consol'] != 'n') ? $getData['consol'] : 'n'; 
+			$jobname = isset($getData['jobname']) ? $getData['jobname'] : null; 
+			$jobdesc = isset($getData['jobdesc']) ? $getData['jobdesc'] : null; 
+			$quote = isset($getData['quote']) ? $getData['quote'] : 0; 
+			$division = isset($getData['division']) ? $getData['division'] : 0; 
+			$projecttype = isset($getData['projecttype']) ? $getData['projecttype'] : null; 
+			$selectedOption = "";
+			foreach ($projecttype as $option => $value) {
+			   $selectedOption.= $value.'/'; 
+			}
+			$project_type = substr($selectedOption,0,-1);
+			$jobs = Array(
+					"id" => $jobid,
+					"ekbillable" =>  $ekbillable,
+					"approved"  => $approved,	
+					"jobclosed"=> $jobclosed,
+					"invoiced" =>  $invoiced,	
+					"jobname" => $jobname,
+					"consolidated_check" => $consol,
+					"description" => $jobdesc,								
+					"dateofclosure"=> $dateofclosure,								
+					"projecttype" => $project_type,
+					"quote" => $quote,
+					"division" => $division
+					);
+		     $update  = $this->Clients_model->update_job_inline($jobs);
+			 echo json_encode($update);  
 		}
 	}	

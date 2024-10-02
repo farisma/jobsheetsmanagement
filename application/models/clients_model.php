@@ -416,6 +416,7 @@
 		return ($this->db->affected_rows() != 1) ? false : true;
 		
 		}
+	
 		/*
 			Function: listJobs()
 			List all jobs in the database.
@@ -423,7 +424,7 @@
 		*/	
 		public function listJobs ()
 		{
-			$query = $this->db->query("select t1.id,t1.date as dateadded,t1.job_no,t2.clientname,t1.jobname,t1.projecttype,t1.description,t1.invoiced,t1.approved,t1.ekbillable,t1.retainer_c_job,t1.eksc_retainer,t1.consolidated_check,t1.consolidated_jobno,t1.projecttype,t1.division,t1.quote from jobs as t1,clients as t2 where t2.id = t1.client_id and t1.enabled='y' order by id desc");
+			$query = $this->db->query("select t1.id,t1.date as dateadded,t1.job_no,t2.clientname,t1.jobname,t1.projecttype,t1.description,t1.jobclosed,t1.invoiced,t1.approved,t1.ekbillable,t1.retainer_c_job,t1.eksc_retainer,t1.consolidated_check,t1.consolidated_jobno,t1.projecttype,t1.division,t1.quote,t3.division as divisionname from jobs as t1,clients as t2,divisions as t3 where t2.id = t1.client_id and t1.enabled='y' and t1.division = t3.id order by id desc");
 			
 			if ($query->num_rows() > 0)
 			{
@@ -436,6 +437,7 @@
 					$result[$i]["clientname"] =  $row->clientname;
 					$result[$i]["jobname"] =  $row->jobname;
 					$result[$i]["description"] =  $row->description;
+					$result[$i]["closed"] =  $row->jobclosed;
 					$result[$i]["invoiced"] =  $row->invoiced;
 					$result[$i]["approved"] =  $row->approved;
 					$result[$i]["ekbillable"] =  $row->ekbillable;
@@ -443,12 +445,12 @@
 					$result[$i]["eksc_retainer"] =  $row->eksc_retainer;
 					$result[$i]["consolidated_check"] =  $row->consolidated_check;
 					$result[$i]["consolidated_jobno"] =  $row->consolidated_jobno;
-					$result[$i]["project_type"] =  $row->projecttype;
-					$result[$i]["division"] =  $row->division;
+					$result[$i]["project_type_ids"] =  $row->projecttype;
+					$result[$i]["division"] =  $row->divisionname;
 					$result[$i]["quote"] =  $row->quote;
 					
 					//To convert project types' id to its name in case of multiple project type in a project
-					$projecttypes = explode("/",$result[$i]["project_type"]);
+					$projecttypes = explode("/",$result[$i]["project_type_ids"]);
 					$projecttypes_concat = "";
 					for($k=0;$k<count($projecttypes);$k++) {
 					
@@ -633,7 +635,7 @@
 		
 		public function selectJobById ($id)
 		{
-			$query = $this->db->query("select t1.id,t1.date,t1.job_no,t2.id as clientid,t2.clientname,t1.jobname,t1.description,t1.projecttype,t1.approved,t1.invoiced,t1.jobclosed,t1.ekbillable,t1.retainerscope,t1.retainer_c_job,t1.consolidated_check,t1.consolidated_jobno,t1.monthly_consol_jobno,t1.consolidatedB_c_job,t1.quote as quoted_amount, t1.division from jobs as t1,clients as t2 where t2.id = t1.client_id and t1.id=".$id."");
+			$query = $this->db->query("select t1.id,t1.date,t1.job_no,t2.id as clientid,t2.clientname,t1.jobname,t1.description,t1.projecttype,t1.approved,t1.jobclosed,t1.invoiced,t1.jobclosed,t1.ekbillable,t1.retainerscope,t1.retainer_c_job,t1.eksc_retainer,t1.consolidated_check,t1.consolidated_jobno,t1.monthly_consol_jobno,t1.consolidatedB_c_job,t1.quote as quoted_amount, t1.division from jobs as t1,clients as t2 where t2.id = t1.client_id and t1.id=".$id."");
 			
 			if ($query->num_rows() > 0)
 			{
@@ -815,7 +817,35 @@
 		return ($this->db->affected_rows() != 1) ? false : true;
 		
 		}
-		
+		/*
+		Function: update_job_inline()
+		Update existing job with the new details inline.
+		Author: Faris M A
+		*/	
+
+		public function update_job_inline($job){
+			
+			$data = array(				
+				"ekbillable" =>  $job['ekbillable'],
+				"approved"  => $job['approved'],	
+				"jobclosed"=> $job['jobclosed'],
+				"invoiced" =>  $job['invoiced'],	
+				"jobname" => $job['jobname'],
+				"consolidated_check" => $job['consolidated_check'],
+				"description" => $job['description'],								
+				"dateofclosure"=> $job['dateofclosure'],								
+				"projecttype" => $job['projecttype'],
+				"quote" => $job['quote'],
+				"division" => $job['division']
+				);
+				$id = $job['id'];				
+				$this->db->set($data);
+				$this->db->where('id',$id); 
+				$this->db->update('jobs');    
+				//return $data;
+				return ($this->db->affected_rows() != 1) ? false : true;
+		}
+
 		/*
 		Function: updateClient()
 		Update existing Client with the new details (Client Code).
@@ -1097,6 +1127,14 @@
 			}
 			 
 		    else return null; 		
+		}
+
+		public function getAllDivisions() {
+			$query = $this->db->query("select id,division from divisions");
+			if ($query->num_rows() > 0) {
+				return $query->result_array();
+			}
+			return null;
 		}
 
 		public function getAllDivisionsandColors($client) {

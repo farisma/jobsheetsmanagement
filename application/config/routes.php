@@ -143,8 +143,8 @@ $route['exportmonthlyreportalljobs'] = "clients/exportmonthlyreportalljobs";
 $route['ajaxToGetDivisionsByClientID/(:any)'] = "clients/find_divisions_by_client";
 
 $route['get-job-for-edit/(:any)'] = "clients/getJobForEdit";
-
-
+$route['get-divisions-and-project-types'] = "clients/getDivisionsAndProjectTypes";
+$route['edit-job-inline']  =  "clients/editJobInline";
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */
