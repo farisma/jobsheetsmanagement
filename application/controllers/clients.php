@@ -627,6 +627,13 @@
 				$jobnameEK = $this->input->post('jobnameEK');
 				$project_type_ekr = $this->input->post('project_type_ekr'); //project type for eksc retainer
 				
+				$division = $this->input->post('company_division');
+				if($division == '') $division = 0;
+				$quoted_amount = $this->input->post('quoted_amount');
+				if($quoted_amount == null) $quoted_amount = 0;
+
+
+
 				$selectedOption = "";
 				foreach ($project_type_ekr as $option => $value) {
 					$selectedOption.= $value.'/'; // I am separating Values with a comma (,) so that I can extract data using explode()
@@ -678,7 +685,9 @@
 				"ekyearno" => $year_jobno,
 				"ekjobnoformonth" => $jobindexformonth,
 				"approved" => $ekapproval,
-				"invoiced" => $ekinvoiced ,
+				"invoiced" => $ekinvoiced,
+				"division" => $division,
+				"quote" => $quoted_amount,
 				"ekbillable" => $ekbillable,
 				"retainerscope" => $retainerscope,
 				"consolidated_check" => $under750,
@@ -1343,6 +1352,8 @@
 			    $divisionsperclient  =  $this->Clients_model->getDivisionsPerClientforOpenaAndClosedJobs($clientdetail); 
 			else if($closed == 'y' && $invoiced == 'y')
 			    $divisionsperclient  =  $this->Clients_model->getDivisionsPerClientforOpenClosedaAndInvoicedJobs($clientdetail); 
+			else if($closed != 'y' && $invoiced == 'y')
+			    $divisionsperclient  =  $this->Clients_model->getDivisionsPerClientforOpenClosedaAndInvoicedJobs($clientdetail); 
 			 $result = [];
 			 
 			if(!empty($divisionsperclient)) {
@@ -1649,6 +1660,8 @@
 			    $divisionsperclient  =  $this->Clients_model->getDivisionsPerClientforOpenaAndClosedJobs($clientdetail); 
 			else if($closed == 'y' && $invoiced == 'y')
 			    $divisionsperclient  =  $this->Clients_model->getDivisionsPerClientforOpenClosedaAndInvoicedJobs($clientdetail); 
+			else if($closed != 'y' && $invoiced == 'y')
+			    $divisionsperclient  =  $this->Clients_model->getDivisionsPerClientforOpenClosedaAndInvoicedJobs($clientdetail);
 			// echo "<pre>";
 			// print_r($divisionsperclient);
 			// echo "</pre>";

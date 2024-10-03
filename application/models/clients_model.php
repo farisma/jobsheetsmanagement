@@ -185,6 +185,8 @@
 			"ekjobnoformonth" => $jobs['ekjobnoformonth'],
 			"approved" =>  $jobs['approved'],
 			"invoiced" => $jobs['invoiced'],
+			"division" => $jobs["division"],
+			"quote"=> $jobs["quote"],
 			"ekbillable" => $jobs['ekbillable'],
 			"retainerscope" => $jobs['retainerscope'],
 			"consolidated_check" => $jobs['consolidated_check'],

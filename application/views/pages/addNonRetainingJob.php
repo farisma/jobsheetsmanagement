@@ -257,7 +257,36 @@
 	function getEKRetainerJobSeqNo()
 	{
 		var monthNames = ["Jan", "Feb", "March", "April", "May", "June","July", "Aug", "Sep", "Oct", "Nov", "Dec"];
-		
+		var divisions_option;
+		var clientId;
+		clientId = $("#clientEK").val(); 
+		divisions_option = $('#ekretainer_company_division');
+
+		jQuery.ajax({
+					type: "GET",
+					url: "<?php echo base_url(); ?>" + "index.php/ajaxToGetDivisionsByClientID/"+clientId,
+					data: {},
+					dataType: "json",
+					success: function(res) {
+						if (res)
+						{
+							//console.log(res)
+							//divisions_option = $('#consol_company_division');
+							divisions_option.addClass('show')
+							$(".ekretainer_division_field").addClass('show')
+							$.each(res, function(index, value) {
+								divisions_option.append($('<option></option>').val(value.id).text(value.division));
+							});
+						}
+						else 
+						{
+							divisions_option.removeClass('show')
+							$(".ekretainer_division_field").removeClass('show')
+							divisions_option.val('')
+							//$("#show_jobno").text("Error in fetching the Job no."); 
+						}
+					}
+				});
 		
 		jQuery.ajax({
 			type: "POST",
@@ -419,7 +448,7 @@
 		jobnameEK = document.getElementById("jobnameEK").value;
 		date = document.getElementById("dateEK").value;
 		project_type = document.getElementById("project_type_ekr").value;
-		
+		quoted_amount = parseInt(document.getElementById("ekretainer_quoted_amount").value);
 		if(desc == "" || date == "" || jobnameEK == "" || project_type == "") 
 		{
 			if(jobnameEK == "")
@@ -440,7 +469,12 @@
 			}
 			return false;
 		}
-		
+		else if((quoted_amount != "" || quoted_amount !=0) &&  quoted_amount > 100000)
+			{
+				
+		        document.getElementById("quoted_amount_validate3").innerHTML = "Amount exceeds the maximum limit. You can only enter up 100000";
+				return false;
+			}
 		else { 
 			 grecaptcha.ready(function() {
           grecaptcha.execute('6LeQ6A4aAAAAAKe29UyIDwcqvmwikoKhAaE-80GT', {action: 'submit'}).then(function(token) {
@@ -861,6 +895,17 @@
 							
 						</select><span id="project_type_ekr_validate1" style="color:red;"></span>
 					
+					</td>
+				</tr>
+				<tr>
+				   <td colspan="1"><span class="ekretainer_quote_field">Quote:</span></td><td colspan="1">
+				   <input type="number" id="ekretainer_quoted_amount" name="quoted_amount" min="1" max="100000" step="0.1" class="ekretainer_quote_field">
+				   <span id="quoted_amount_validate3" style="color:red;"></span>				
+					</td>
+				</tr>
+				<tr>
+				   <td colspan="1" ><span class="ekretainer_division_field"> Division:</span></td><td colspan="1" >
+					   <select name="company_division" id="ekretainer_company_division" class="ekretainer_division_field">	
 					</td>
 				</tr>
 					<tr>
