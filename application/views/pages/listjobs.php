@@ -321,21 +321,21 @@ echo "<option value=".$key.">".$rows."</option>";
 	<thead>
 		<tr style="background:#dddddd;">
 			<th width="10">&nbsp;</th>
-			<th width="40" class="smallfont">Retainer</th>
-			<th width="40" class="smallfont">Billable</th>
-			<th width="45" class="smallfont">Approved</th>
+			<th width="30" class="smallfont">Retainer</th>
+			<th width="30" class="smallfont">Billable</th>
+			<th width="35" class="smallfont">Approved</th>
 			<th width="40" class="smallfont">Closed</th>
 			<th width="40" class="smallfont">Invoiced</th>
-			<th width="50" class="smallfont">Consol. billing</th>
+			<th width="30" class="smallfont">Consol. billing</th>
 			<th width="50">Date</th>
-			<th width="70">Type</th>
+			<th width="95">Type</th>
 			<th width="60">Job No.</th>
 			<th width="70">Job Name</th>
 			<th width="180">Description</th>
 			<th width="70">Amount</th>
 			<th width="100">Division</th>
 			<th width="80">Client</th>
-			<?php if($admin) {?><th width="100">Action</th><?php }?>
+			<?php if($admin) {?><th width="120">Action</th><?php }?>
 		</tr>
 	</thead>
  <?php
@@ -386,7 +386,7 @@ if(isset($jobs)) {foreach($jobs as $key => $rows)
 			<td><?php  echo $jobs[$key]["quote"]; ?></td>
 			<td><?php  echo $jobs[$key]["division"]; ?></td>
 			<td><?php echo $jobs[$key]["clientname"];?></td>
-			<?php if($admin) {?><td><a data-id="<?php echo $jobs[$key]["id"] ?>" href="#" class="editOnClick">Edit inline</a><a href="<?php echo site_url('edit-job/'.$jobs[$key]["id"]) ?>">Edit</a>&nbsp;&nbsp;<a onClick="disableJobById(<?php echo $jobs[$key]["id"];?>)" href="<?php echo "#"; ?>">Disable</a>&nbsp;&nbsp;<?php  if($user == "admin"  || $user == "brandon") {?><a onClick="deleteJobById(<?php echo $jobs[$key]["id"];?>)" href="<?php echo "#"; ?>">Delete</a><?php  } ?></td><?php } ?>
+			<?php if($admin) {?><td><a data-id="<?php echo $jobs[$key]["id"] ?>" href="#" class="editOnClick">Edit inline</a>&nbsp;&nbsp;<a href="<?php echo site_url('edit-job/'.$jobs[$key]["id"]) ?>">Edit</a>&nbsp;&nbsp;<a onClick="disableJobById(<?php echo $jobs[$key]["id"];?>)" href="<?php echo "#"; ?>">Disable</a>&nbsp;&nbsp;<?php  if($user == "admin"  || $user == "brandon") {?><a onClick="deleteJobById(<?php echo $jobs[$key]["id"];?>)" href="<?php echo "#"; ?>">Delete</a><?php  } ?></td><?php } ?>
 	    </tr>
 		<!-- <tr class="jobedit" id="jobedit<?php echo $jobs[$key]["id"]; ?>">
   			<td></td>

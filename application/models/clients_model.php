@@ -1124,7 +1124,55 @@
 
 			return $query->result_array();
 		}
+		public function getDivisionsPerClientforOpenaAndClosedJobs($clientdetails) {
+			$clientid = $clientdetails['clientid'];
+			$querystr = "SELECT division FROM jobs where 
+			client_id = '".$clientid."' and 
+			(jobclosed != 'y' and invoiced != 'y') and 
+			(division != '' && division IS NOT NULL) and 
+			enabled = 'y' 
+			group by division
+			UNION
+			SELECT division FROM jobs where 
+			client_id = '".$clientid."' and 
+			(jobclosed = 'y' and invoiced != 'y') and 
+			(division != '' && division IS NOT NULL) and 
+			enabled = 'y' 
+			group by division";			
+			
+			$query = $this->db->query($querystr);
+			if ($query->num_rows() > 0) 
 
+			return $query->result_array();
+		}
+		public function getDivisionsPerClientforOpenClosedaAndInvoicedJobs($clientdetails) {
+			$clientid = $clientdetails['clientid'];
+			$querystr = "SELECT division FROM jobs where 
+			client_id = '".$clientid."' and 
+			(jobclosed != 'y' and invoiced != 'y') and 
+			(division != '' && division IS NOT NULL) and 
+			enabled = 'y' 
+			group by division
+			UNION
+			SELECT division FROM jobs where 
+			client_id = '".$clientid."' and 
+			(jobclosed = 'y' and invoiced != 'y') and 
+			(division != '' && division IS NOT NULL) and 
+			enabled = 'y' 
+			group by division	
+			UNION
+			SELECT division FROM jobs where 
+			client_id = '".$clientid."' and 
+			(jobclosed = 'y' and invoiced = 'y') and 
+			(division != '' && division IS NOT NULL) and 
+			enabled = 'y' 
+			group by division";	
+			
+			$query = $this->db->query($querystr);
+			if ($query->num_rows() > 0) 
+
+			return $query->result_array();
+		}
 
 		public function getColorForDivision($divisionid) {
 			$query = $this->db->query("select color,textcolor from divisions where id='".$divisionid."'");
@@ -1246,7 +1294,7 @@
 			and t1.division = '".$division."'".$q.")";
 			//$status = "Invoiced";
 			}
-		//return $querystr;
+		//return $clientdetails;
 		$query = $this->db->query($querystr);    
 			
 		if ($query->num_rows() > 0)

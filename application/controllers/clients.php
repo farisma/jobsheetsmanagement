@@ -725,7 +725,7 @@
 					$from = $fromemail;
 					$to = $this->b_emailid;										
 					$fullname = $full_name;//"Andon Admin";
-					$this->Vacation_model->sendemailnotification($from,$to,$emailText,$fullname,$cc,$bcc,$subject);
+					//$this->Vacation_model->sendemailnotification($from,$to,$emailText,$fullname,$cc,$bcc,$subject);
 				}
 				else 
 				{
@@ -1234,7 +1234,7 @@
 						$cc = $ccemail;
 						$bcc = "";
 						$fullname = $full_name;
-						$this->Vacation_model->sendemailnotification($from,$to,$emailText,$fullname,$cc,$bcc,$subject);
+						//$this->Vacation_model->sendemailnotification($from,$to,$emailText,$fullname,$cc,$bcc,$subject);
 					}
 				}
 	            else 
@@ -1337,8 +1337,12 @@
 				 
 			);
 			//print_r($clientdetail);
-			
-			$divisionsperclient  =  $this->Clients_model->getDivisionsPerClientforOpenJobs($clientdetail); 
+			if($closed != 'y' && $invoiced != 'y')
+			    $divisionsperclient  =  $this->Clients_model->getDivisionsPerClientforOpenJobs($clientdetail); 
+			else if($closed == 'y' && $invoiced != 'y')
+			    $divisionsperclient  =  $this->Clients_model->getDivisionsPerClientforOpenaAndClosedJobs($clientdetail); 
+			else if($closed == 'y' && $invoiced == 'y')
+			    $divisionsperclient  =  $this->Clients_model->getDivisionsPerClientforOpenClosedaAndInvoicedJobs($clientdetail); 
 			 $result = [];
 			 
 			if(!empty($divisionsperclient)) {
@@ -1638,7 +1642,13 @@
 				 
 			);
 			//print_r($clientdetail);
-			$divisionsperclient  =  $this->Clients_model->getDivisionsPerClientforOpenJobs($clientdetail); 
+			//$divisionsperclient  =  $this->Clients_model->getDivisionsPerClientforOpenJobs($clientdetail); 
+			if($closed != 'y' && $invoiced != 'y')
+			    $divisionsperclient  =  $this->Clients_model->getDivisionsPerClientforOpenJobs($clientdetail); 
+			else if($closed == 'y' && $invoiced != 'y')
+			    $divisionsperclient  =  $this->Clients_model->getDivisionsPerClientforOpenaAndClosedJobs($clientdetail); 
+			else if($closed == 'y' && $invoiced == 'y')
+			    $divisionsperclient  =  $this->Clients_model->getDivisionsPerClientforOpenClosedaAndInvoicedJobs($clientdetail); 
 			// echo "<pre>";
 			// print_r($divisionsperclient);
 			// echo "</pre>";
