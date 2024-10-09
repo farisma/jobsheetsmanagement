@@ -4,7 +4,10 @@
    <!-- <script src="//code.jquery.com/ui/1.11.3/jquery-ui.js"></script> -->
    <script src="//code.jquery.com/ui/1.13.3/jquery-ui.min.js"></script>
   <script>
-  $(document).ready(function(){         
+  $(document).ready(function(){     
+    $('#tabs').click(function(){
+       clearScreen();
+    })
     $("#searchstatusreport").hide()
     $("#searchclosedjobsreport").hide()
      // function to populate dropdown with last 12 months 
@@ -130,8 +133,19 @@
           statusreport_date = $("#statusreportdate").val();
       var statusreport_closed = $('#statusreportclosed').prop('checked')? $("#statusreportclosed").val():false;
       var statusreport_invoiced = $('#statusreportinvoiced').prop('checked')? $("#statusreportinvoiced").val():false;
-      
+      var maintitle = "";
+      var datemonth = $("#statusreportdate option:selected").text()
+      if(statusreport_closed === false && statusreport_invoiced === false) {
+        maintitle = "Open jobs for "+ datemonth;
+      }
+      else if(statusreport_closed != false && statusreport_invoiced === false) {
+        maintitle = "Open and closed jobs (not invoiced) for "+ datemonth;
+      }
+      else if(statusreport_closed != false && statusreport_invoiced != false) {
+        maintitle = "Open, closed and invoiced jobs for "+ datemonth;
+      }
 
+     
       var retainerjobs,nonretainerjobs;
       //this is for passing parameters to export function to generate excel report by setting up selected parameters in hidden variables
       $("#statusreport_cientid").val(clientid)
@@ -145,7 +159,10 @@
 				  dataType: "json",
 					success: function(res) {
 						if (res)
-						{              
+						{       
+              $("#maintitlestatusreport").text(maintitle)
+     
+      
               console.log("al",res)            
               nonretainerjobs = res.nonretainerjobs;
               retainerjobs = res.retainerjobs
@@ -185,6 +202,8 @@
       $("#closedjobsreportclientid").val(clientid)
       $("#closedjobsreportmonth").val(datesplit[0])
       $("#closedjobsreportyear").val(datesplit[1])
+
+      
       jQuery.ajax({
 					type: "POST",
 					url: "<?php echo base_url(); ?>" + "index.php/findreport/",
@@ -228,6 +247,7 @@
       $(".searchresultslist").empty();
       $(".exportbtn").hide();
       $(".reporttitle").empty();
+      $("#maintitlestatusreport").empty();
     }
   </script>
 
@@ -328,8 +348,9 @@
       <input type="hidden" name="hiddenclosed" id="statusreport_closed" value="<?php  //if(isset($clientid)) echo $clientid; else echo 0;?>">
       <input type="hidden" name="hiddeninvoiced" id="statusreport_invoiced" value="<?php  //if(isset($clientid)) echo $clientid; else echo 0;?>">
       <input type="hidden" name="hiddendate" id="statusreport_date" value="<?php  //if(isset($clientid)) echo $clientid; else echo 0;?>">
-
+      <h2 id="maintitlestatusreport"></h2>
        <div id="retainerresults">
+          
            <h2 id="retainertitle" class="reporttitle"></h2>
            <table class="searchresultslist" id="retainerjobslist"></table>
        </div>
