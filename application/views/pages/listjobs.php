@@ -330,10 +330,10 @@ echo "<option value=".$key.">".$rows."</option>";
 			<th width="50">Date</th>
 			<th width="95">Type</th>
 			<th width="60">Job No.</th>
-			<th width="70">Job Name</th>
+			<th width="100">Job Name</th>
 			<th width="180">Description</th>
 			<th width="70">Amount</th>
-			<th width="100">Division</th>
+			<th width="70">Division</th>
 			<th width="80">Client</th>
 			<?php if($admin) {?><th width="120">Action</th><?php }?>
 		</tr>

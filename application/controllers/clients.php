@@ -10,8 +10,8 @@
 		public $username;
 
 
-		//public $jobs_url = 'http://localhost/jobsheets/index.php/list-jobs'; // for pagination config
-		public $jobs_url = 'https://theandongroup.com/jobsheetstest/index.php/list-jobs';
+		public $jobs_url = 'https://theandongroup.com/jobsheetmanagement/index.php/list-jobs'; // for pagination config
+		// public $jobs_url = 'https://theandongroup.com/jobsheetstest/index.php/list-jobs';
 		// public $b_emailid = "faris@theandongroup.com"; 
 		// public $account_manager_emailid = "faris@theandongroup.com";
 		// public $accountant_emailid = "faris@theandongroup.com";
@@ -264,7 +264,7 @@
 					
 					//$bcc = "";
 					$fullname = $full_name;
-					//$this->Vacation_model->sendemailnotification($from,$to,$emailText,$fullname,$cc,$bcc,$subject);
+					$this->Vacation_model->sendemailnotification($from,$to,$emailText,$fullname,$cc,$bcc,$subject);
 					
 				}
 				else 
@@ -429,7 +429,7 @@
 					
 					//$bcc = "";
 					$fullname = $full_name;
-					//$this->Vacation_model->sendemailnotification($from,$to,$emailText,$fullname,$cc,$bcc,$subject);
+					$this->Vacation_model->sendemailnotification($from,$to,$emailText,$fullname,$cc,$bcc,$subject);
 					                      
 				}
 				else 
@@ -565,7 +565,7 @@
 
 								//$bcc = "";
 								$fullname = $full_name;
-							//	$this->Vacation_model->sendemailnotification($from,$to,$emailText,$fullname,$cc,$bcc,$subject);
+							    $this->Vacation_model->sendemailnotification($from,$to,$emailText,$fullname,$cc,$bcc,$subject);
 
 						}
 						else 
@@ -734,7 +734,7 @@
 					$from = $fromemail;
 					$to = $this->b_emailid;										
 					$fullname = $full_name;//"Andon Admin";
-					//$this->Vacation_model->sendemailnotification($from,$to,$emailText,$fullname,$cc,$bcc,$subject);
+					$this->Vacation_model->sendemailnotification($from,$to,$emailText,$fullname,$cc,$bcc,$subject);
 				}
 				else 
 				{
@@ -1223,7 +1223,7 @@
 						$cc = $this->accountant_emailid;
 						$bcc = "";
 						$fullname = $full_name;
-						//$this->Vacation_model->sendemailnotification($from,$to,$emailText,$fullname,$cc,$bcc,$subject);
+						$this->Vacation_model->sendemailnotification($from,$to,$emailText,$fullname,$cc,$bcc,$subject);
 					}
 					else if($jobclosed == "y") {
 						$toemail = $this->b_emailid;
@@ -1243,7 +1243,7 @@
 						$cc = $ccemail;
 						$bcc = "";
 						$fullname = $full_name;
-						//$this->Vacation_model->sendemailnotification($from,$to,$emailText,$fullname,$cc,$bcc,$subject);
+						$this->Vacation_model->sendemailnotification($from,$to,$emailText,$fullname,$cc,$bcc,$subject);
 					}
 				}
 	            else 
@@ -1707,8 +1707,8 @@
 			$this->excel->getActiveSheet()->setCellValueByColumnAndRow(3,2,"Job Name");			
 			$this->excel->getActiveSheet()->setCellValueByColumnAndRow(4,2,"Description");
 			$this->excel->getActiveSheet()->setCellValueByColumnAndRow(5,2,"Date");
-			$this->excel->getActiveSheet()->setCellValueByColumnAndRow(6,2,"Amount");
-			$this->excel->getActiveSheet()->setCellValueByColumnAndRow(7,2,"Status");
+			$this->excel->getActiveSheet()->setCellValueByColumnAndRow(6,2,"Status");
+			$this->excel->getActiveSheet()->setCellValueByColumnAndRow(7,2,"Amount");
 			
 
 			// set the data
@@ -1742,8 +1742,8 @@
 			}
 			// $this->excel->getActiveSheet()->setCellValueByColumnAndRow(6,$rownum,"Total amount");
 			// $this->excel->getActiveSheet()->setCellValueByColumnAndRow(7,$rownum,$totalvalueofmonth);
-			$this->excel->getActiveSheet()->getStyle('G' . $rownum)->getFont()->setBold(true);
-			$this->excel->getActiveSheet()->getStyle('H' . $rownum)->getFont()->setBold(true);	 
+			// $this->excel->getActiveSheet()->getStyle('G' . $rownum)->getFont()->setBold(true);
+			// $this->excel->getActiveSheet()->getStyle('H' . $rownum)->getFont()->setBold(true);	 
             $rownum = $currentrow + 4;
 			if(isset($divisionsperclient)) {
 					$divisionlegend = $this->Clients_model->getAllDivisionsandColors($client);
@@ -1795,7 +1795,7 @@
 
 		public function getJobItemsRows($divisionsperclient,$currentexcel,$retainer,$rownum,$columnnum,$clientdetail) {
 			if(!empty($divisionsperclient)) {
-				
+				$totalvalueofmonth = 0;
 				$i=1;
 				foreach($divisionsperclient as $key=>$value) {
 					    $currentdiv = $value['division'];
@@ -1815,16 +1815,18 @@
 								$currentexcel->getActiveSheet()->setCellValueByColumnAndRow(3,$rownum,$value1['jobname']);
 								$currentexcel->getActiveSheet()->setCellValueByColumnAndRow(4,$rownum,$value1['description']);
 								$currentexcel->getActiveSheet()->setCellValueByColumnAndRow(5,$rownum,date('d/M/Y',strtotime($value1['date'])));
-								$currentexcel->getActiveSheet()->setCellValueByColumnAndRow(6,$rownum,$value1['quote']);
+								
 								    if($value1["jobclosed"] == 'n' && $value1["invoiced"] == 'n')
 									   $status = "WIP";
 									else if($value1["jobclosed"] == 'y' && $value1["invoiced"] == 'n')
 									   $status = "Closed";
 									else if ($value1["jobclosed"] == 'y' && $value1["invoiced"] == 'y')
 									   $status = "Invoiced";
-								$currentexcel->getActiveSheet()->setCellValueByColumnAndRow(7,$rownum,$status);
+								$currentexcel->getActiveSheet()->setCellValueByColumnAndRow(6,$rownum,$status);
+								$currentexcel->getActiveSheet()->setCellValueByColumnAndRow(7,$rownum,$value1['quote']);
 								// $totalvalueperdiv = $totalvalueperdiv + $value1['quote'];
 								// $totalvalueofmonth = $totalvalueofmonth + $value1['quote'];
+								$totalvalueofmonth = $totalvalueofmonth + $value1['quote'];
 								
 								for($col = 'A'; $col !== 'I'; $col++) {
 									$currentexcel->getActiveSheet()->getStyle($col.$rownum)->applyFromArray(
@@ -1847,6 +1849,14 @@
 					}														
 					
 				}
+				$totalrowno = $rownum+1;
+				$retainer == true?$totaltext = "Total Retainer amount":$totaltext="Total Non-retainer amount";
+				$currentexcel->getActiveSheet()->getStyle('G' . $totalrowno)->getFont()->setBold(true);
+				$currentexcel->getActiveSheet()->getStyle('H' . $totalrowno)->getFont()->setBold(true);
+				$currentexcel->getActiveSheet()->setCellValueByColumnAndRow(6,$totalrowno,$totaltext);
+				$currentexcel->getActiveSheet()->setCellValueByColumnAndRow(7,$totalrowno,$totalvalueofmonth);
+					
+				$rownum = $totalrowno+1;
 			} 
 			// else {
 			// 	//if there are no divisions avaialble for clients
