@@ -1124,6 +1124,7 @@
 				$approved  = $this->input->post('approval');
 				//to check if the job is approved before, if its already approved then no need to send email notification
 				$approved_currentstatus  = $this->input->post('approved_previous');
+				$closed_currentstatus  = $this->input->post('closed_previous');
 				$jobno_hidden  = $this->input->post('jobno');
 				$client_hidden = $this->input->post('client_hidden');
 				$clientid_hidden = $this->input->post('clientid_hidden');
@@ -1225,7 +1226,7 @@
 						$fullname = $full_name;
 						$this->Vacation_model->sendemailnotification($from,$to,$emailText,$fullname,$cc,$bcc,$subject);
 					}
-					else if($jobclosed == "y") {
+					else if($jobclosed == "y" && $closed_currentstatus != "y") {
 						$toemail = $this->b_emailid;
 						$ccemail = $this->accountant_emailid;
 						$subject = "Notification on closure of job(".$jobno_hidden.")";
@@ -2002,6 +2003,10 @@
 			$quote = isset($getData['quote']) ? $getData['quote'] : 0; 
 			$division = isset($getData['division']) ? $getData['division'] : 0; 
 			$projecttype = isset($getData['projecttype']) ? $getData['projecttype'] : null; 
+			$closed_currentstatus = isset($getData['closed_previous']) ? $getData['closed_previous'] : 'n'; 
+			$approved_currentstatus = isset($getData['approved_previous']) ? $getData['approved_previous'] : 'n'; 
+			$jobno_hidden = isset($getData['jobno_hidden']) ? $getData['jobno_hidden'] : null; 
+			$client_hidden = isset($getData['clientname_hidden']) ? $getData['clientname_hidden'] : null; 
 			$selectedOption = "";
 			foreach ($projecttype as $option => $value) {
 			   $selectedOption.= $value.'/'; 
@@ -2022,6 +2027,53 @@
 					"division" => $division
 					);
 		     $update  = $this->Clients_model->update_job_inline($jobs);
+			 if($update) 
+				{
+					if($approved == "y" && $approved_currentstatus != "y" && $jobclosed != "y" && $invoiced != 'y') //if an unapproved job is approved
+					{
+						
+						$subject = "Notification on approval of job(".$jobno_hidden.")";
+						$user = $this->ion_auth->user()->row_array();
+						$fromemail = $user['email'];
+						
+						$full_name = $user['first_name']." ".$user['last_name'];
+						$emailText = "
+						Dear Admin,<br>
+						This is to notify you that a job has been approved on the Jobsheet Management System. Below are the details.<br><br>
+						Client: ".$client_hidden."<br>
+						Job No: ".$jobno_hidden."<br>
+						Job Name: ".$jobname."<br>";
+						
+						
+						
+						$from = $fromemail;
+						$to = $this->b_emailid;
+						$cc = $this->accountant_emailid;
+						$bcc = "";
+						$fullname = $full_name;
+						$this->Vacation_model->sendemailnotification($from,$to,$emailText,$fullname,$cc,$bcc,$subject);
+					}
+					else if($jobclosed == "y" && $closed_currentstatus != "y" && $invoiced != 'y') {
+						$toemail = $this->b_emailid;
+						$ccemail = $this->accountant_emailid;
+						$subject = "Notification on closure of job(".$jobno_hidden.")";
+						$user = $this->ion_auth->user()->row_array();
+						$fromemail = $user['email'];
+						$full_name = $user['first_name']." ".$user['last_name'];
+						$emailText = "
+						Team,<br>
+						This is to notify you that a job has been closed on the Jobsheet Management System. Below are the details. Please update your timesheets for the same.<br><br>
+						Client: ".$client_hidden."<br>
+						Job No: ".$jobno_hidden."<br>
+						Job Name: ".$jobname."<br>";
+						$from = $fromemail;
+						$to = $toemail;
+						$cc = $ccemail;
+						$bcc = "";
+						$fullname = $full_name;
+						$this->Vacation_model->sendemailnotification($from,$to,$emailText,$fullname,$cc,$bcc,$subject);
+					}
+				}
 			 echo json_encode($update);  
 		}
 	}	

@@ -154,7 +154,7 @@ function validate()
 		   <td colspan="2"><input type="checkbox" name="invoiced" id="invoiced" value="y" <?php  if($invoiced  == "y") echo "checked";?> >&nbsp;&nbsp;Invoiced</td>
 		</tr>
 		<tr>
-		   <td colspan="2"><input type="checkbox" name="jobclosed" id="jobclosed" value="y" <?php  if($jobclosed  == "y") echo "checked";?> >&nbsp;&nbsp;Closed</td>
+		   <td colspan="2"><input type="checkbox" name="jobclosed" id="jobclosed" value="y" <?php  if($jobclosed  == "y") echo "checked";?> >&nbsp;&nbsp;Closed</td><input type="hidden" name="closed_previous" id="closed_previous" value="<?php echo $jobclosed;?>"
 		</tr>
 		<tr>
 		<td colspan="2"><input class="btn" type="button" value="Update" onClick="JavaScript: return validate();" ></td>

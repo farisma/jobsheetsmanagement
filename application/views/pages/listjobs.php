@@ -73,12 +73,12 @@ jQuery.ajax({
 					<td colspan="1"></td>
 					<td colspan="1"><input type="checkbox" name="retainerjob" id="retainerjob" value="y" ${retainerchecked} disabled /></td>
 					<td colspan="1"><input type="checkbox" name="billablejob" id="billablejob" value="y" ${ekbillablechecked} /></td>
-					<td colspan="1"><input type="checkbox" name="approvedjob" id="approvedjob" value="y" ${approvedchecked} /></td>
-					<td colspan="1"><input type="checkbox" name="closedjob" id="closedjob" value="y" ${closedchecked} /></td>
+					<td colspan="1"><input type="checkbox" name="approvedjob" id="approvedjob" value="y" ${approvedchecked} /><input type="hidden" name="approved_previous" id="approved_previous" value="${approvedchecked}" /></td>
+					<td colspan="1"><input type="checkbox" name="closedjob" id="closedjob" value="y" ${closedchecked} /><input type="hidden" name="closed_previous" id="closed_previous" value="${closedchecked}" /></td>
 					<td colspan="1"><input type="checkbox" name="invoicedjob" id="invoicedjob" value="y" ${invoicedchecked} /></td>
 					<td colspan="1"><input type="checkbox" name="consoljob" id="consoljob" value="y" ${consolchecked} /></td>
 					<td colspan="1">${res[0].date}</td>
-					<td colspan="1" class="ptdropdowntd${jobnoId}"></td>
+					<td colspan="1" class="ptdropdowntd${jobnoId}"><input type="hidden" name="jobno_hidden" id="jobno_hidden" value="${res[0].job_no}" /><input type="hidden" name="clientname_hidden" id="clientname_hidden" value="${res[0].clientname}" /></td>
 					<td colspan="1">${res[0].job_no}</td>
 					<td colspan="1"><input type="text" name="jobname" id="jobname" value="${res[0].jobname}" style="width:90%;"/></td>
 					<td colspan="1"><input type="text" name="jobdesc" id="jobdesc" value="${res[0].description}" style="width:95%;"/></td>
@@ -135,7 +135,11 @@ jQuery.ajax({
 		jobdesc = $('tr.jobedit'+jobid).find('input#jobdesc').val(),
 		quote = $('tr.jobedit'+jobid).find('input#quote').val(),
 		projecttype = $(".ptdropdowntd"+jobid+" .projecttypesdrop").val(),
-		division = $(".divdropdowntd"+jobid+" .divisiondrop").val();
+		division = $(".divdropdowntd"+jobid+" .divisiondrop").val(),
+		approved_previous = $('tr.jobedit'+jobid).find('input#approved_previous').val(),
+		closed_previous = $('tr.jobedit'+jobid).find('input#closed_previous').val(),
+		jobno_hidden = $('tr.jobedit'+jobid).find('input#jobno_hidden').val(),
+		clientname_hidden = $('tr.jobedit'+jobid).find('input#clientname_hidden').val();
 		console.log("drop",projecttype)
 	var data = {
 		"id":jobid,
@@ -149,7 +153,11 @@ jQuery.ajax({
 		"jobdesc":jobdesc,
 		"quote":quote,
 		"projecttype":projecttype,
-		"division":division
+		"division":division,
+		"approved_previous":approved_previous,
+		"closed_previous":closed_previous,
+		"jobno_hidden":jobno_hidden,
+		"clientname_hidden":clientname_hidden
 	}
 	var statusmsg = $('tr.jobedit'+jobid+ ' td.updatestatus');
 	jQuery.ajax({
