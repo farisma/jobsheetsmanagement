@@ -7,6 +7,11 @@
 		public $accountant_emailid = "haider@theandongroup.com";
 		public $teamemail = "andonteam@theandongroup.com";
 
+		// public $b_emailid = "faris@theandongroup.com"; 
+		// public $account_manager_emailid = "";
+		// public $accountant_emailid = "faris@theandongroup.com";
+		// public $teamemail = "faris@theandongroup.com";
+
 		public $username;
 
 
@@ -233,7 +238,8 @@
 					// send email to brandon, caroline and haider if a job has been raised
 					//if($client_id == 35) {
 					
-					$subject = "Notification on new job(".$jobno.") raised on Jobsheet Management System";
+					//$subject = "Notification on new job(".$jobno.") raised on Jobsheet Management System";
+					$subject = "Notification on new job raised on Jobsheet Management System";
 					$user = $this->ion_auth->user()->row_array();
 					$fromemail = $user['email'];
 					$full_name = $user['first_name']." ".$user['last_name'];
@@ -398,7 +404,8 @@
 					// send email to brandon, caroline and haider if a job has been raised
 					//if($client_id == 35) {
 					
-					$subject = "Notification on new job(".$jobno.") raised on Jobsheet Management System";
+					// $subject = "Notification on new job(".$jobno.") raised on Jobsheet Management System";
+					$subject = "Notification on new job raised on Jobsheet Management System";
 					$user = $this->ion_auth->user()->row_array();
 					$fromemail = $user['email'];
 					$full_name = $user['first_name']." ".$user['last_name'];
@@ -534,7 +541,8 @@
 							// send email to brandon, caroline and haider if a job has been raised
 							//if($client_id == 35) {
 
-							$subject = "Notification on new job(".$jobno.") raised on Jobsheet Management System";
+							$subject = "Notification on new job raised on Jobsheet Management System";
+							// $subject = "Notification on new job(".$jobno.") raised on Jobsheet Management System";
 							$user = $this->ion_auth->user()->row_array();
 							$fromemail = $user['email'];
 							$full_name = $user['first_name']." ".$user['last_name'];
@@ -702,7 +710,8 @@
 				{
 					$data['message'] = "Job has been added successfully.";
 					//Send an email to brandon, caroline and haider on new jobs
-					$subject = "Notification on new job(".$jobno.") raised on Jobsheet Management System";
+					// $subject = "Notification on new job(".$jobno.") raised on Jobsheet Management System";
+					$subject = "Notification on new job raised on Jobsheet Management System";
 					$user = $this->ion_auth->user()->row_array();
 					$fromemail = $user['email'];
 					$full_name = $user['first_name']." ".$user['last_name'];
@@ -1204,8 +1213,8 @@
 					$data['message'] = "Job has been updated successfully.";	
 					if($approved == "y" && $approved_currentstatus != "y" ) //if an unapproved job is approved
 					{
-						
-						$subject = "Notification on approval of job(".$jobno_hidden.")";
+						$subject = "Notification on approval of job";
+						//$subject = "Notification on approval of job(".$jobno_hidden.")";
 						$user = $this->ion_auth->user()->row_array();
 						$fromemail = $user['email'];
 						
@@ -1229,7 +1238,8 @@
 					else if($jobclosed == "y" && $closed_currentstatus != "y") {
 						$toemail = $this->b_emailid;
 						$ccemail = $this->accountant_emailid;
-						$subject = "Notification on closure of job(".$jobno_hidden.")";
+						$subject = "Notification on closure of job";
+						//$subject = "Notification on closure of job(".$jobno_hidden.")";
 						$user = $this->ion_auth->user()->row_array();
 						$fromemail = $user['email'];
 						$full_name = $user['first_name']." ".$user['last_name'];
@@ -2032,7 +2042,8 @@
 					if($approved == "y" && $approved_currentstatus != "y" && $jobclosed != "y" && $invoiced != 'y') //if an unapproved job is approved
 					{
 						
-						$subject = "Notification on approval of job(".$jobno_hidden.")";
+						// $subject = "Notification on approval of job(".$jobno_hidden.")";
+						$subject = "Notification on approval of job";
 						$user = $this->ion_auth->user()->row_array();
 						$fromemail = $user['email'];
 						
@@ -2056,7 +2067,8 @@
 					else if($jobclosed == "y" && $closed_currentstatus != "y" && $invoiced != 'y') {
 						$toemail = $this->b_emailid;
 						$ccemail = $this->accountant_emailid;
-						$subject = "Notification on closure of job(".$jobno_hidden.")";
+						$subject = "Notification on closure of job";
+						// $subject = "Notification on closure of job(".$jobno_hidden.")";
 						$user = $this->ion_auth->user()->row_array();
 						$fromemail = $user['email'];
 						$full_name = $user['first_name']." ".$user['last_name'];
