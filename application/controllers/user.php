@@ -480,5 +480,33 @@ END:VCALENDAR";
   exit;
 			  //echo 
 		  }
+
+		  
+	public function searchLeavesforUser(){
+		   // $users = $this->getUsers();
+		    //$data['users'] =  $users;
+			
+			$currentuser = $this->ion_auth->user()->row_array();
+			//print_r($currentuser);
+			$user = $currentuser['id'];
+			$data['username']=$currentuser['username'];
+			if($this->input->post('year')) {
+			//$user = $this->input->post('userid');
+		    $year = $this->input->post('year');
+			$data['sickleavescnt'] = $this->Vacation_model->getCountOfLeavesBasedonVacationType($user,$year,1);
+			$data['annualleavescnt'] = $this->Vacation_model->getCountOfLeavesBasedonVacationType($user,$year,2);
+			$data['casualeavescnt'] = $this->Vacation_model->getCountOfLeavesBasedonVacationType($user,$year,3);
+			$data['unpaidleavescnt'] = $this->Vacation_model->getCountOfLeavesBasedonVacationType($user,$year,4);
 		
+			$data['userid'] =  $user;
+			$data['sickleaves'] = $this->Vacation_model->getAllApprovedLeavesBasedonVacationType($user,$year,1);
+			$data['annualleaves'] = $this->Vacation_model->getAllApprovedLeavesBasedonVacationType($user,$year,2);
+			$data['casualeaves'] = $this->Vacation_model->getAllApprovedLeavesBasedonVacationType($user,$year,3);
+			$data['unpaidleaves'] = $this->Vacation_model->getAllApprovedLeavesBasedonVacationType($user,$year,4);
+			
+			}
+			
+			$this->render_page('pages/searchleavesforCurrentUser',$data);
+	}
+
 		}		

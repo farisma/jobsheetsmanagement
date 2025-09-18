@@ -1,18 +1,15 @@
 <?php if(isset($message)) {?><div class="alert"> <?php echo $message;?></div><?php }?>
 <div class="hero-unit">
 
-<?php echo form_open('vacation/searchleaves', array('class' => 'searchleaves','id'=>'searchleavesform')) ?>
-<h3>Leave Management</h3>
+<?php echo form_open('user/searchleavesforuser', array('class' => 'searchleaves','id'=>'searchleavesform')) ?>
+<h3>Check your leaves status</h3>
 
-<?php include('leavemanage_menu.php')?>
+<?php //include('leavemanage_menu.php')?>
 	 <table class="searchjobsheet" id="searchjobsheet">
 	  
 	
 			<tr>			
-		   <td>
-		   User  <?php echo form_dropdown('userid',$users,0); ?>
-			<?php echo form_error('userid'); ?> 
-		   </td>
+		   
 		    <td>
 				<?php
               $currentYear = date("Y");?>
@@ -35,7 +32,7 @@
 	</form>
 	
 	<?php   if(isset($userid)) {
-	$username =  $users[$userid];
+	//$username =  $users[$userid];
 	
 	?>
 	<table class="searchresultslist">

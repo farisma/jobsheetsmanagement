@@ -13,6 +13,7 @@
 		  <li class="<?php echo ($current_section == 'another-page') ? 'active' : '' ?>"><a href="<?php echo site_url('adminpage') ?>">Admin</a></li>        
 		  <li class="<?php echo ($current_section == 'another-page') ? 'active' : '' ?>"><a href="<?php echo site_url('jobsheets') ?>">Timesheets</a></li>
 		   <li class="<?php echo ($current_section == 'another-page') ? 'active' : '' ?>"><a href="<?php echo site_url('user/leaverequest') ?>">Request for leave</a></li>
+       <li class="<?php echo ($current_section == 'another-page') ? 'active' : '' ?>"><a href="<?php echo site_url('user/searchleavesforuser') ?>">Leave reports</a></li>
        <li class="<?php echo ($current_section == 'another-page') ? 'active' : '' ?>"><a href="<?php echo site_url('alljobs') ?>">View all jobs</a></li>
 		  <li class="<?php echo ($current_section == 'another-page') ? 'active' : '' ?>"><a href="<?php echo site_url('jobsheets/search') ?>">Search</a></li>
         </ul>

@@ -166,6 +166,8 @@ jQuery.ajax({
 		data: data,			
 		dataType: "json",
 		success: function(res) {
+				// console.log('update res', res)
+
 			if (res)
 				{
 					//console.log("update",res)

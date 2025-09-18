@@ -118,7 +118,7 @@ $route['delete-holiday/(:any)/(:any)'] = "vacation/deleteHolidays";
 
 $route['vacation/searchleaves'] = "vacation/leaveSearch";
 
-
+$route['user/searchleavesforuser'] = "user/searchLeavesforUser";
 
 
 
