@@ -29,7 +29,7 @@
 					
 					$user = $this->ion_auth->user()->row();
 					$email = $user->email;
-					if($user->id != 1 && $user->id != 4 && $user->id != 23){ /* Brandon Haider or Super admin*/
+					if($user->id != 1 && $user->id != 4 && $user->id != 23 && $user->id != 38){ /* Brandon Haider or Super admin*/
 						$this->session->set_flashdata('notadmin', 'You are not allowed to view this page');
 						redirect('home');
 					}
