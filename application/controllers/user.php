@@ -3,10 +3,11 @@
 	class User extends App_Controller
 	{
 		public $b_emailid = "brandon@theandongroup.com"; 
-		public $hr_emailid = "";  //lissy@theandongroup.com
+		public $hr_emailid = "danielle@theandongroup.com";  //lissy@theandongroup.com
 
 		// public $b_emailid = "faris@theandongroup.com"; 
 		// public $hr_emailid = "";  
+
 		
 		public function __construct()
 		{
@@ -404,6 +405,7 @@
 						$fullname = $fn." ".$ln;
 						$subject = 'Request for leave';
 						$send = $this->Vacation_model->sendemailnotification($from,$to,$emailText,$fullname,$cc,$bcc,$subject);
+						//print_r($send);
 						if($send){
 							$data['mailsent'] ="true";
 						}
